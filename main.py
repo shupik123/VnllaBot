@@ -89,5 +89,14 @@ async def remove(ctx):
 			json.dump(notifylist, f)
 	await client.say("You've been removed from the server notification list.\nUse `!add` to get on the list.")
 
+@client.command(pass_context = True)
+async def meme(ctx):
+	response = requests.get("https://api.memeload.us/v1/random")
+	data = response.json()
+	memetitle = (data["title"])
+	memelink = (data["image"])
+
+	await client.say("**{title}**\n{link}".format(title = memetitle, link = memelink))
+
 client.loop.create_task(vnllastatusloop())
 client.run(token)
