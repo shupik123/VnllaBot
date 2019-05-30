@@ -13,6 +13,10 @@ client = commands.Bot(command_prefix = "!")
 status = "vnllastatus.png"
 down = "vnllastatusdown.png"
 
+tokenLocation = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.txt" # not showing you that :P
+with open(tokenLocation, "r") as f:
+	token = f
+
 fileName = "notifylist.json"
 with open(fileName, "r") as f:
 	notifylist = json.load(f)
@@ -71,6 +75,7 @@ async def vnlla(ctx):
 async def add(ctx):
 	global notifylist
 	notifylist.append(int(ctx.message.author.id))
+	print("{person} was added to notifylist".format(person = ctx.message.author))
 	with open(fileName, "w") as f:
 			json.dump(notifylist, f)
 	await client.say("You've been added to the server notification list.\nUse `!remove` to get off the list.")
@@ -79,9 +84,10 @@ async def add(ctx):
 async def remove(ctx):
 	global notifylist
 	notifylist.remove(int(ctx.message.author.id))
+	print("{person} was removed to notifylist".format(person = ctx.message.author))
 	with open(fileName, "w") as f:
 			json.dump(notifylist, f)
 	await client.say("You've been removed from the server notification list.\nUse `!add` to get on the list.")
 
 client.loop.create_task(vnllastatusloop())
-client.run("Hidden")
+client.run(token)
