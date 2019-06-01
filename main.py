@@ -81,11 +81,31 @@ async def on_ready():
 	print(client.user.name)
 	print(client.user.id)
 	print('------')
+	global starttime
+	starttime = time.time()
 
 @client.command(pass_context = True)
 async def vnlla(ctx):
 	# sends the vnlla status image
 	await client.send_file(ctx.message.channel, image())
+
+@client.command(pass_context = True)
+async def botstatus(ctx):
+	serverlist = "**Servers the bot is in:**```\n"
+	for server in client.servers:
+		# gets the names of all the servers
+		serverlist = serverlist + "{a} owned by {b}\n".format(a=server.name,b=server.owner)
+	serverlist = serverlist + "```"
+	await client.say(serverlist)
+
+	# gets the current up time of the bot
+	global starttime
+	current_time = round(time.time() - starttime)
+	second = current_time % 60
+	minute = (current_time // 60) % 60
+	hour = current_time // 3600
+	await client.say("{name} has been running for {hour} hr, {minute} min, {second} sec.".format(name=client.user.name, hour=hour, minute=minute, second=second))
+		
 
 @client.command(pass_context = True)
 async def add(ctx):
