@@ -63,7 +63,7 @@ async def vnllastatusloop():
 				for people in notifylist:
 					# notify all people on list that server is up
 					await client.send_message(await client.get_user_info(people), "Vnlla is back online.")
-					uptime = 0
+				uptime = 0
 			# when online
 			await client.change_presence(status=discord.Status.online, game=discord.Game(name="Server Online for {a} min".format(a=uptime)))
 			if open(status,"rb").read() == open("vnllastatusfull.png","rb").read():
