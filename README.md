@@ -10,3 +10,12 @@ __Commands:__
  - `!add` : adds you to the notification list of when vnlla goes down and back up.
  - `!remove` : removes you from the notification list.
  - `!meme` : gives you a random meme.
+ 
+ __Features:__
+ - Playing `Server online for "x" min`
+ - Playing `Server full, online for "x" min`
+ - Playing `Down for "x" min`
+ - Turns to `Idle` (Yellow) status when vnlla is down.
+ - Turns to `Do not Disturb` (Red) status when vnlla has been down for at least 10 minutes.
+ - Dm's everyone on the notification list after vnlla has been down for at least 10 minutes.
+ - Dm's everyone on the notification list after vnlla is back online.
