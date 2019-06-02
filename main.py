@@ -13,9 +13,17 @@ client = commands.Bot(command_prefix = "!")
 status = "vnllastatus.png"
 down = "vnllastatusdown.png"
 
-tokenLocation = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json" # not showing you that :P
-with open(tokenLocation, "r") as f:
-	token = json.load(f)[0]
+shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
+# XELADA INPUT DIRECTORY HERE
+xelada = "C:\\Users\\Vnllatoken.json"
+
+
+try:
+	with open(shupik, "r") as f:
+		token = json.load(f)[0]
+except:
+	with open(xelada, "r") as f:
+		token = json.load(f)[0]
 
 # getting the list of people that want to be notified
 fileName = "notifylist.json"
