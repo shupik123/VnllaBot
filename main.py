@@ -25,9 +25,13 @@ except:
 		token = json.load(f)[0]
 
 # getting the list of people that want to be notified
-fileName = "notifylist.json"
-with open(fileName, "r") as f:
-	notifylist = json.load(f)
+try:
+	fileName = "notifylist.json"
+	with open(fileName, "r") as f:
+		notifylist = json.load(f)
+except:
+	with open(fileName, "w") as f:
+		json.dump([], f)
 
 # updates status every minute
 async def vnllastatusloop():
