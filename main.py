@@ -41,7 +41,7 @@ async def vnllastatusloop():
 
 		try:
 			status = server.status()
-			if downtime > 5:
+			if downtime >= 5:
 				for people in notifylist:
 					# notify all people on list that server is up
 					await client.send_message(await client.get_user_info(people), "Vnlla is back online.")
@@ -53,15 +53,17 @@ async def vnllastatusloop():
 			if downtime < 5:
 				# if it is down for less than 5 minutes set to idle status
 				await client.change_presence(status=discord.Status.idle, game=discord.Game(name="Down for {a} min".format(a=downtime)))
+			else:
+				await client.change_presence(status=discord.Status.do_not_disturb, game=discord.Game(name="Down for {a} min".format(a=downtime)))
+			
 			if downtime == 5:
 				for people in notifylist:
 					# notify all people on list that server is down
 					await client.send_message(await client.get_user_info(people), "Vnlla has been down for 5 minutes.")
-			downtime += 1
+			downtime += 0.5
 			# set to do not disturb
-			await client.change_presence(status=discord.Status.do_not_disturb, game=discord.Game(name="Down for {a} min".format(a=downtime)))
 
-		await asyncio.sleep(60)
+		await asyncio.sleep(30)
 
 
 @client.event
