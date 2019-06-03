@@ -7,16 +7,16 @@ Use this [link](https://discordapp.com/oauth2/authorize?client_id=58230254078420
 
 __Commands:__
  - `!vnlla` : tells you the status of the minecraft server.
+ - `!notify` : will ping you when a spot on the server opens up.
  - `!add` : adds you to the notification list of when vnlla goes down and back up.
  - `!remove` : removes you from the notification list.
  - `!meme` : gives you a random meme.
  - `!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.
  
  __Features:__
- - Playing `Server online for "x" min`
- - Playing `Server full, online for "x" min`
+ - Playing `Server online (`players`/`max`)
  - Playing `Down for "x" min`
- - Turns to `Idle` (Yellow) status when vnlla is down.
- - Turns to `Do not Disturb` (Red) status when vnlla has been down for at least 10 minutes.
- - Dm's everyone on the notification list after vnlla has been down for at least 10 minutes.
+ - Turns to `Idle (Yellow)` status when vnlla is down.
+ - Turns to `Do not Disturb (Red)` status when vnlla has been down for at least 5 minutes.
+ - Dm's everyone on the notification list after vnlla has been down for at least 5 minutes.
  - Dm's everyone on the notification list after vnlla is back online.

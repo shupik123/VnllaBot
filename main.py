@@ -7,16 +7,15 @@ from discord.ext.commands import Bot
 import asyncio
 import requests
 import json
+from mcstatus import MinecraftServer
+
+server = MinecraftServer.lookup("vnlla.net:25565")
 
 client = commands.Bot(command_prefix = "!")
-
-status = "vnllastatus.png"
-down = "vnllastatusdown.png"
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
 # XELADA INPUT DIRECTORY HERE
 xelada = "C:\\Users\\Vnllatoken.json"
-
 
 try:
 	with open(shupik, "r") as f:
@@ -30,57 +29,36 @@ fileName = "notifylist.json"
 with open(fileName, "r") as f:
 	notifylist = json.load(f)
 
-# getting the status of vnlla
-def image():
-	try:
-		url = 'https://minecraft-mp.com/half-banner-134764.png'
-		r = requests.get(url, allow_redirects=True)
-		open("vnllastatus.png", 'wb').write(r.content)
-		return "vnllastatus.png"
-	except:
-		return "error.png"
-
-# comparing the status of vnlla to when it is down
-def vnllastatus():
-	image()
-	if open(status,"rb").read() == open(down,"rb").read():
-		return False
-	else:
-		return True
-
 # updates status every minute
 async def vnllastatusloop():
 	await client.wait_until_ready()
 	downtime = 0
-	uptime = 0
 	while not client.is_closed:
-		# if vnlla is down
-		if vnllastatus() == False:
-			# set to do not disturb
-			await client.change_presence(status=discord.Status.do_not_disturb, game=discord.Game(name="Down for {a} min".format(a=downtime)))
-			if downtime < 10:
-				# if it is down for less than 10 minutes set to idle status
-				await client.change_presence(status=discord.Status.idle, game=discord.Game(name="Down for {a} min".format(a=downtime)))
-			if downtime == 10:
-				for people in notifylist:
-					# notify all people on list that server is down
-					await client.send_message(await client.get_user_info(people), "Vnlla has been down for 10 minutes.")
-			downtime += 1
-		else:
-			if downtime > 10:
+
+		try:
+			status = server.status()
+			if downtime > 5:
 				for people in notifylist:
 					# notify all people on list that server is up
 					await client.send_message(await client.get_user_info(people), "Vnlla is back online.")
-				uptime = 0
-			# when online
-			await client.change_presence(status=discord.Status.online, game=discord.Game(name="Server Online for {a} min".format(a=uptime)))
-			if open(status,"rb").read() == open("vnllastatusfull.png","rb").read():
-				# if full
-				await client.change_presence(status=discord.Status.online, game=discord.Game(name="Server Full, Online for {a} min".format(a=uptime)))
+
+			await client.change_presence(status=discord.Status.online, game=discord.Game(name="Server Online ({0}/{1})".format(status.players.online,status.players.max)))
 			downtime = 0
-			uptime += 1
+
+		except IOError:
+			if downtime < 5:
+				# if it is down for less than 5 minutes set to idle status
+				await client.change_presence(status=discord.Status.idle, game=discord.Game(name="Down for {a} min".format(a=downtime)))
+			if downtime == 5:
+				for people in notifylist:
+					# notify all people on list that server is down
+					await client.send_message(await client.get_user_info(people), "Vnlla has been down for 5 minutes.")
+			downtime += 1
+			# set to do not disturb
+			await client.change_presence(status=discord.Status.do_not_disturb, game=discord.Game(name="Down for {a} min".format(a=downtime)))
 
 		await asyncio.sleep(60)
+
 
 @client.event
 async def on_ready():
@@ -92,10 +70,34 @@ async def on_ready():
 	global starttime
 	starttime = time.time()
 
+
 @client.command(pass_context = True)
 async def vnlla(ctx):
-	# sends the vnlla status image
-	await client.send_file(ctx.message.channel, image())
+	try:
+		status = server.status()
+		pass
+	except IOError:
+		return await client.say("The server is currently offline.")
+	await client.say("The server has **{0}/{1}** players.".format(status.players.online, status.players.max))
+
+
+@client.command(pass_context=True)
+async def notify(ctx):
+	try:
+		status = server.status()
+		pass
+	except IOError:
+		return await client.say("The server is currently offline.")
+	
+	if status.players.online != status.players.max:
+		return await client.say("A spot on the server is open right now!")
+
+	msg = await client.say("I will notify you when a spot opens up.")
+	while status.players.online == status.players.max:
+		status = server.status()
+		await asyncio.sleep(2)
+	return await client.edit_message(msg, "<@{0}> A spot on the server is open right now!".format(ctx.message.author.id))
+
 
 @client.command(pass_context = True)
 async def botstatus(ctx):
@@ -112,6 +114,7 @@ async def botstatus(ctx):
 	second = current_time % 60
 	minute = (current_time // 60) % 60
 	hour = current_time // 3600
+	
 	await client.say("{name} has been running for {hour} hr, {minute} min, {second} sec.".format(name=client.user.name, hour=hour, minute=minute, second=second))
 		
 
@@ -126,6 +129,7 @@ async def add(ctx):
 		json.dump(notifylist, f)
 	await client.say("You've been added to the server notification list.\nUse `!remove` to get off the list.")
 
+
 @client.command(pass_context = True)
 async def remove(ctx):
 	global notifylist
@@ -135,6 +139,7 @@ async def remove(ctx):
 		# removes the new person from the .json file
 		json.dump(notifylist, f)
 	await client.say("You've been removed from the server notification list.\nUse `!add` to get on the list.")
+
 
 @client.command(pass_context = True)
 async def meme(ctx):
