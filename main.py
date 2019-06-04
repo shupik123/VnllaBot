@@ -13,9 +13,11 @@ server = MinecraftServer.lookup("vnlla.net:25565")
 
 client = commands.Bot(command_prefix = "!")
 
+client.remove_command('help')
+
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
 # XELADA INPUT DIRECTORY HERE
-xelada = "C:\\Users\\Vnllatoken.json"
+xelada = "/home/vnlla/"
 
 try:
 	with open(shupik, "r") as f:
@@ -37,31 +39,32 @@ except:
 async def vnllastatusloop():
 	await client.wait_until_ready()
 	downtime = 0
-	while not client.is_closed:
-
+	while True:
 		try:
 			status = server.status()
 			if downtime >= 5:
-				for people in notifylist:
+				for tags in notifylist:
 					# notify all people on list that server is up
-					await client.send_message(await client.get_user_info(people), "Vnlla is back online.")
+					user = await client.fetch_user(tags)
+					await user.send("Vnlla is back online.")
 
-			await client.change_presence(status=discord.Status.online, game=discord.Game(name="Server Online ({0}/{1})".format(status.players.online,status.players.max)))
+			await client.change_presence(status=discord.Status.online, activity=discord.Game("Server Online ({0}/{1})".format(status.players.online,status.players.max)))
 			downtime = 0
 
 		except IOError:
 			if downtime < 5:
 				# if it is down for less than 5 minutes set to idle status
-				await client.change_presence(status=discord.Status.idle, game=discord.Game(name="Down for {a} min".format(a=downtime)))
+				
+				await client.change_presence(status=discord.Status.idle, activity=discord.Game("Down for {a} min".format(a=downtime)))
 			else:
-				await client.change_presence(status=discord.Status.do_not_disturb, game=discord.Game(name="Down for {a} min".format(a=downtime)))
+				await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game("Down for {a} min".format(a=downtime)))
 			
 			if downtime == 5:
-				for people in notifylist:
+				for tags in notifylist:
 					# notify all people on list that server is down
-					await client.send_message(await client.get_user_info(people), "Vnlla has been down for 5 minutes.")
+					user = await client.fetch_user(tags)
+					await user.send("Vnlla has been down for 5 minutes.")
 			downtime += 0.5
-			# set to do not disturb
 
 		await asyncio.sleep(30)
 
@@ -76,6 +79,20 @@ async def on_ready():
 	global starttime
 	starttime = time.time()
 
+@client.command(pass_context = True)
+async def help(ctx):
+	helphelp = "`!help` : you already know.\n"
+	vnllahelp = "`!vnlla` : tells you the status of the minecraft server.\n"
+	notifyhelp = "`!notify` : will ping you when a spot on the server opens up.\n"
+	addhelp = "`!add` : adds you to the notification list of when vnlla goes down and back up.\n"
+	removehelp = "`!remove` : removes you from the notification list.\n"
+	memehelp = "`!meme` : gives you a random meme.\n"
+	botstatushelp = "`!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.\n\n"
+	invite = "To invite the bot to your own server: https://discordapp.com/oauth2/authorize?client_id=582302540784205870&scope=bot&permissions=39936\n"
+	github = "Check out our github here: https://github.com/shupik123/VnllaBot"
+	
+	allhelp = helphelp + vnllahelp + notifyhelp + addhelp + removehelp + memehelp + botstatushelp + invite + github
+	await ctx.send(allhelp)
 
 @client.command(pass_context = True)
 async def vnlla(ctx):
@@ -83,8 +100,8 @@ async def vnlla(ctx):
 		status = server.status()
 		pass
 	except IOError:
-		return await client.say("The server is currently offline.")
-	await client.say("The server has **{0}/{1}** players.".format(status.players.online, status.players.max))
+		return await ctx.send("The server is currently offline.")
+	await ctx.send("The server has **{0}/{1}** players.".format(status.players.online, status.players.max))
 
 
 @client.command(pass_context=True)
@@ -93,26 +110,26 @@ async def notify(ctx):
 		status = server.status()
 		pass
 	except IOError:
-		return await client.say("The server is currently offline.")
+		return await ctx.send("The server is currently offline.")
 	
 	if status.players.online != status.players.max:
-		return await client.say("A spot on the server is open right now!")
+		return await ctx.send("A spot on the server is open right now!")
 
-	msg = await client.say("I will notify you when a spot opens up.")
+	msg = await ctx.send("I will notify you when a spot opens up.")
 	while status.players.online == status.players.max:
 		status = server.status()
 		await asyncio.sleep(2)
-	return await client.edit_message(msg, "<@{0}> A spot on the server is open right now!".format(ctx.message.author.id))
+	return await ctx.message.edit(msg, "<@{0}> A spot on the server is open right now!".format(ctx.message.author.id))
 
 
 @client.command(pass_context = True)
 async def botstatus(ctx):
 	serverlist = "**Servers the bot is in:**```\n"
-	for server in client.servers:
+	for server in client.guilds:
 		# gets the names of all the servers
 		serverlist = serverlist + "{a} owned by {b}\n".format(a=server.name,b=server.owner)
 	serverlist = serverlist + "```"
-	await client.say(serverlist)
+	await ctx.send(serverlist)
 
 	# gets the current up time of the bot
 	global starttime
@@ -121,7 +138,7 @@ async def botstatus(ctx):
 	minute = (current_time // 60) % 60
 	hour = current_time // 3600
 	
-	await client.say("{name} has been running for {hour} hr, {minute} min, {second} sec.".format(name=client.user.name, hour=hour, minute=minute, second=second))
+	await ctx.send("{name} has been running for {hour} hr, {minute} min, {second} sec.".format(name=client.user.name, hour=hour, minute=minute, second=second))
 		
 
 @client.command(pass_context = True)
@@ -133,7 +150,7 @@ async def add(ctx):
 	with open(fileName, "w") as f:
 		# writes the new person to the .json file
 		json.dump(notifylist, f)
-	await client.say("You've been added to the server notification list.\nUse `!remove` to get off the list.")
+	await ctx.send("You've been added to the server notification list.\nUse `!remove` to get off the list.")
 
 
 @client.command(pass_context = True)
@@ -144,7 +161,7 @@ async def remove(ctx):
 	with open(fileName, "w") as f:
 		# removes the new person from the .json file
 		json.dump(notifylist, f)
-	await client.say("You've been removed from the server notification list.\nUse `!add` to get on the list.")
+	await ctx.send("You've been removed from the server notification list.\nUse `!add` to get on the list.")
 
 
 @client.command(pass_context = True)
@@ -155,7 +172,7 @@ async def meme(ctx):
 	memetitle = (data["title"])
 	memelink = (data["image"])
 
-	await client.say("**{title}**\n{link}".format(title = memetitle, link = memelink))
+	await ctx.send("**{title}**\n{link}".format(title = memetitle, link = memelink))
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
