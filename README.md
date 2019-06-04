@@ -6,6 +6,7 @@ __Inviting:__
 Use this [link](https://discordapp.com/oauth2/authorize?client_id=582302540784205870&scope=bot&permissions=39936) to invite VnllaBot to your server.
 
 __Commands:__
+ - `!help` : helps ya out!
  - `!vnlla` : tells you the status of the minecraft server.
  - `!notify` : will ping you when a spot on the server opens up.
  - `!add` : adds you to the notification list of when vnlla goes down and back up.
