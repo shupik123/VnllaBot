@@ -119,6 +119,7 @@ async def notify(ctx):
 	while status.players.online == status.players.max:
 		status = server.status()
 		await asyncio.sleep(2)
+	await msg.delete();
 	return await ctx.send("<@{0}> A spot on the server is open right now!".format(ctx.message.author.id))
 
 
