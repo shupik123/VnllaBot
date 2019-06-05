@@ -177,3 +177,4 @@ async def meme(ctx):
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
+#test
