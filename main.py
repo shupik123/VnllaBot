@@ -17,7 +17,7 @@ client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
 # XELADA INPUT DIRECTORY HERE
-xelada = "/home/vnlla/"
+xelada = "/home/vnlla/Vnllatoken.json"
 
 try:
 	with open(shupik, "r") as f:
