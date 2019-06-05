@@ -146,6 +146,8 @@ async def botstatus(ctx):
 async def add(ctx):
 	# adds to the list of people to be notified
 	global notifylist
+	if ctx.message.author.id in notifylist:
+		return await ctx.send("You are already on the notify list.\nUse `!remove` to get off the list.")
 	notifylist.append(int(ctx.message.author.id))
 	print("{person} was added to notifylist".format(person = ctx.message.author))
 	with open(fileName, "w") as f:
@@ -157,6 +159,8 @@ async def add(ctx):
 @client.command(pass_context = True)
 async def remove(ctx):
 	global notifylist
+	if ctx.message.author.id not in notifylist:
+		return await ctx.send("You are not on the notify list.\nUse `!add` to get on the list.")
 	notifylist.remove(int(ctx.message.author.id))
 	print("{person} was removed from notifylist".format(person = ctx.message.author))
 	with open(fileName, "w") as f:
