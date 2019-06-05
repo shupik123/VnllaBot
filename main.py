@@ -17,7 +17,7 @@ client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
 # XELADA INPUT DIRECTORY HERE
-xelada = "C:\\Users\\Vnllatoken.json"
+xelada = "/home/vnlla/Vnllatoken.json"
 
 try:
 	with open(shupik, "r") as f:
@@ -119,7 +119,8 @@ async def notify(ctx):
 	while status.players.online == status.players.max:
 		status = server.status()
 		await asyncio.sleep(2)
-	return await msg.edit(content="<@{0}> A spot on the server is open right now!".format(ctx.message.author.id))
+	await msg.delete()
+	return await ctx.send("<@{0}> A spot on the server is open right now!".format(ctx.message.author.id))
 
 
 @client.command(pass_context = True)
