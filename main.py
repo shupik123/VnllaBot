@@ -64,6 +64,9 @@ async def vnllastatusloop():
 					# notify all people on list that server is down
 					user = await client.fetch_user(tags)
 					await user.send("Vnlla has been down for 5 minutes.")
+					
+					serverdownchannel = client.get_channel(582368942715306004)
+					serverdownchannel.send("Vnlla is down.")
 			downtime += 0.5
 
 		await asyncio.sleep(30)
