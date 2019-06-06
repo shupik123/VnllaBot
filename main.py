@@ -66,7 +66,7 @@ async def vnllastatusloop():
 					await user.send("Vnlla has been down for 5 minutes.")
 
 					serverdownchannel = client.get_channel(582368942715306004)
-					serverdownchannel.send("Vnlla is down.")
+					await serverdownchannel.send("Vnlla is down.")
 			downtime += 0.5
 
 		await asyncio.sleep(30)
