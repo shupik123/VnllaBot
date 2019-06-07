@@ -17,7 +17,7 @@ client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
 # XELADA INPUT DIRECTORY HERE
-xelada = "/home/vnlla/Vnllatoken.json"
+xelada = "/home/vnlla/Vnllatoken.json
 
 try:
 	with open(shupik, "r") as f:
@@ -37,6 +37,7 @@ except:
 
 # updates status every minute
 async def vnllastatusloop():
+	global notifylist
 	await client.wait_until_ready()
 	downtime = 0
 	while True:
