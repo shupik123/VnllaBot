@@ -73,6 +73,7 @@ async def vnllastatusloop():
 						break
 				guild = client.get_guild(205205049335349248)
 				owner = guild.get_role(205210339141222400)
+				# pings in the server_down_channel
 				await server_down_channel.send("The server is down!\n{0}".format(owner.mention))
 
 			downtime += 0.5
