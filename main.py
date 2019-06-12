@@ -66,12 +66,15 @@ async def vnllastatusloop():
 					user = await client.fetch_user(tags)
 					await user.send("Vnlla has been down for 5 minutes.")
 
-					all_channels = client.get_all_channels()
+				all_channels = client.get_all_channels()
 				for channel in all_channels:
 					if str(channel) == "server_down_reporting":
 						server_down_channel = channel
 						break
-				await server_down_channel.send("The server is down!")
+				guild = client.get_guild(205205049335349248)
+				owner = guild.get_role(205210339141222400)
+				await server_down_channel.send("The server is down!\n{0}".format(owner.mention))
+
 			downtime += 0.5
 
 		await asyncio.sleep(30)
@@ -191,6 +194,7 @@ async def meme(ctx):
 async def test(ctx):
 	await ctx.send("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
+
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
