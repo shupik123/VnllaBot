@@ -15,7 +15,7 @@ __Commands:__
  - `!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.
  
  __Features:__
- - Playing `Server online (`players`/`max`)
+ - Playing `Server online ( player / max )
  - Playing `Down for "x" min`
  - Turns to `Idle (Yellow)` status when vnlla is down.
  - Turns to `Do not Disturb (Red)` status when vnlla has been down for at least 5 minutes.
