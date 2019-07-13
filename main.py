@@ -99,7 +99,6 @@ async def help(ctx):
 	notifyhelp = "`!notify` : will ping you when a spot on the server opens up.\n"
 	addhelp = "`!add` : adds you to the notification list of when vnlla goes down and back up.\n"
 	removehelp = "`!remove` : removes you from the notification list.\n"
-	memehelp = "`!meme` : gives you a random meme.\n"
 	botstatushelp = "`!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.\n\n"
 	invite = "To invite the bot to your own server: https://discordapp.com/oauth2/authorize?client_id=582302540784205870&scope=bot&permissions=39936\n"
 	github = "Check out our github here: https://github.com/shupik123/VnllaBot"
@@ -184,13 +183,7 @@ async def remove(ctx):
 
 @client.command(pass_context = True)
 async def meme(ctx):
-	# gets a random meme from memeload.us
-	response = requests.get("https://api.memeload.us/v1/random")
-	data = response.json()
-	memetitle = (data["title"])
-	memelink = (data["image"])
-
-	await ctx.send("**{title}**\n{link}".format(title = memetitle, link = memelink))
+	await ctx.send("Sorry, the meme command is gone!\n:upsettimyspaghetti:")
 
 @client.command(pass_context = True)
 async def test(ctx):
