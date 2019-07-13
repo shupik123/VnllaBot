@@ -183,7 +183,7 @@ async def remove(ctx):
 
 @client.command(pass_context = True)
 async def meme(ctx):
-	await ctx.send("Sorry, the meme command is gone!\n:upsettimyspaghetti:")
+	await ctx.send("Sorry, the meme command is gone!\n;(")
 
 @client.command(pass_context = True)
 async def test(ctx):
