@@ -113,9 +113,7 @@ async def vnlla(ctx):
 		pass
 	except IOError:
 		return await ctx.send("The server is currently offline.")
-	embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x5edbff)
-	embed.set_author(name="Vnlla Bot")
-	await ctx.send(embed=embed)
+	await ctx.send(embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x1f3354)
 
 
 @client.command(pass_context=True)
