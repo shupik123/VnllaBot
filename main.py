@@ -95,7 +95,7 @@ async def on_ready():
 @client.command(pass_context = True)
 async def help(ctx):
 	helphelp = "`!help` : you already know.\n"
-	vnllahelp = "`!vnlla` : tells you the status of the minecraft server.\n"
+	vnllahelp = "`!vnlla` : tells you the status of the vnlla minecraft server.\n"
 	notifyhelp = "`!notify` : will ping you when a spot on the server opens up.\n"
 	addhelp = "`!add` : adds you to the notification list of when vnlla goes down and back up.\n"
 	removehelp = "`!remove` : removes you from the notification list.\n"
@@ -113,7 +113,9 @@ async def vnlla(ctx):
 		pass
 	except IOError:
 		return await ctx.send("The server is currently offline.")
-	await ctx.send("The server has **{0}/{1}** players.".format(status.players.online, status.players.max))
+	embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x5edbff)
+	embed.set_author(name="Vnlla Bot")
+	await ctx.send(embed=embed)
 
 
 @client.command(pass_context=True)
