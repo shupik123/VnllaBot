@@ -103,7 +103,7 @@ async def help(ctx):
 	invite = "To invite the bot to your own server: https://discordapp.com/oauth2/authorize?client_id=582302540784205870&scope=bot&permissions=39936\n"
 	github = "Check out our github here: https://github.com/shupik123/VnllaBot"
 	
-	allhelp = helphelp + vnllahelp + notifyhelp + addhelp + removehelp + memehelp + botstatushelp + invite + github
+	allhelp = helphelp + vnllahelp + notifyhelp + addhelp + removehelp + botstatushelp + invite + github
 	await ctx.send(allhelp)
 
 @client.command(pass_context = True)
