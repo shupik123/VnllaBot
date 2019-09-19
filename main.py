@@ -1,4 +1,3 @@
-# test
 # Works with Python 3.6
 import discord
 import os
@@ -9,6 +8,7 @@ import asyncio
 import requests
 import json
 from mcstatus import MinecraftServer
+import random
 
 server = MinecraftServer.lookup("vnlla.net:25565")
 
@@ -16,7 +16,7 @@ client = commands.Bot(command_prefix = "!")
 
 client.remove_command('help')
 
-shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\Bot\\Vnllatoken.json"
+shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
 # XELADA INPUT DIRECTORY HERE
 xelada = "/home/vnlla/Vnllatoken.json"
 
@@ -67,16 +67,6 @@ async def vnllastatusloop():
 					user = await client.fetch_user(tags)
 					await user.send("Vnlla has been down for 5 minutes.")
 
-				all_channels = client.get_all_channels()
-				for channel in all_channels:
-					if str(channel) == "server_down_reporting":
-						server_down_channel = channel
-						break
-				guild = client.get_guild(205205049335349248)
-				owner = guild.get_role(205210339141222400)
-				# pings in the server_down_channel
-				await server_down_channel.send("The server is down!\n{0}".format(owner.mention))
-
 			downtime += 0.5
 
 		await asyncio.sleep(30)
@@ -94,17 +84,15 @@ async def on_ready():
 
 @client.command(pass_context = True)
 async def help(ctx):
-	helphelp = "`!help` : you already know.\n"
-	vnllahelp = "`!vnlla` : tells you the status of the vnlla minecraft server.\n"
-	notifyhelp = "`!notify` : will ping you when a spot on the server opens up.\n"
-	addhelp = "`!add` : adds you to the notification list of when vnlla goes down and back up.\n"
-	removehelp = "`!remove` : removes you from the notification list.\n"
-	botstatushelp = "`!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.\n\n"
-	invite = "To invite the bot to your own server: https://discordapp.com/oauth2/authorize?client_id=582302540784205870&scope=bot&permissions=39936\n"
-	github = "Check out our github here: https://github.com/shupik123/VnllaBot"
-	
-	allhelp = helphelp + vnllahelp + notifyhelp + addhelp + removehelp + botstatushelp + invite + github
-	await ctx.send(allhelp)
+	embed=discord.Embed(title="Github Link", url="https://github.com/shupik123/VnllaBot", color=0x62f3ff)
+	embed.add_field(name=help, value='You already know.', inline=False)
+	embed.add_field(name=vnlla, value='Tells you the status of the vnlla minecraft server.', inline=False)
+	embed.add_field(name=notify, value='Will ping you when a spot on the server opens up.', inline=False)
+	embed.add_field(name=add, value='Adds you to the notification list of when vnlla goes down and back up.', inline=False)
+	embed.add_field(name=remove, value='Removes you from the notification list.', inline=False)
+	embed.add_field(name=botstatus, value='Tells you how long the bot has been running.', inline=False)
+	embed.set_footer(text="Ping @shupik#2705 for any needs.")
+	await ctx.send(embed=embed)
 
 @client.command(pass_context = True)
 async def vnlla(ctx):
@@ -113,8 +101,7 @@ async def vnlla(ctx):
 		pass
 	except IOError:
 		return await ctx.send("The server is currently offline.")
-	await ctx.send(embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x1f3354)
-
+	await ctx.send(embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x1f3354))
 
 @client.command(pass_context=True)
 async def notify(ctx):
@@ -137,13 +124,6 @@ async def notify(ctx):
 
 @client.command(pass_context = True)
 async def botstatus(ctx):
-	serverlist = "**Servers the bot is in:**```\n"
-	for server in client.guilds:
-		# gets the names of all the servers
-		serverlist = serverlist + "{a} owned by {b}\n".format(a=server.name,b=server.owner)
-	serverlist = serverlist + "```"
-	await ctx.send(serverlist)
-
 	# gets the current up time of the bot
 	global starttime
 	current_time = round(time.time() - starttime)
@@ -182,8 +162,19 @@ async def remove(ctx):
 
 
 @client.command(pass_context = True)
-async def meme(ctx):
-	await ctx.send("Sorry, the meme command is gone!\n;(")
+async def hack(ctx):
+	progress = 0
+	await ctx.send("Hacking started...")
+	
+	hacking = await ctx.send("Progress: `----------`")
+	visual = None
+	while progress < 10:
+		progress += random.randint(1,10)/10
+		msg = "Progress: `{0}{1}`".format('█'*int(progress), '-'*(10-int(progress)))
+		await hacking.edit(content=msg)
+		await asyncio.sleep(3)
+	await ctx.send('Hacking successful! To confirm you are an actual person please verify yourself with this link to gain access to VnllaBot!\n<https://tinyurl.com/vnlla-bot>')
+
 
 @client.command(pass_context = True)
 async def test(ctx):
