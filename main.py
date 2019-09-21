@@ -198,7 +198,7 @@ async def question(ctx, *, quest):
 
 	response = requests.request("GET", url, headers=headers, params=querystring)
 
-	ctx.send(response.text)
+	await ctx.send(response.text)
 
 
 client.loop.create_task(vnllastatusloop())
