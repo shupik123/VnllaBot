@@ -82,6 +82,7 @@ async def on_ready():
 	global starttime
 	starttime = time.time()
 
+
 @client.command(pass_context = True)
 async def help(ctx):
 	embed=discord.Embed(title="Github Link", url="https://github.com/shupik123/VnllaBot", color=0x62f3ff)
@@ -102,6 +103,7 @@ async def vnlla(ctx):
 	except IOError:
 		return await ctx.send("The server is currently offline.")
 	await ctx.send(embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x1f3354))
+
 
 @client.command(pass_context=True)
 async def notify(ctx):
@@ -180,6 +182,23 @@ async def hack(ctx):
 async def test(ctx):
 	await ctx.send("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
+
+@client.command(pass_context = True, aliases=['q'])
+async def question(ctx, *, quest):
+	import requests
+
+	url = "https://webknox-question-answering.p.rapidapi.com/questions/answers"
+
+	querystring = {"answerLookup":"false","answerSearch":"false","question":quest}
+
+	headers = {
+		'x-rapidapi-host': "webknox-question-answering.p.rapidapi.com",
+		'x-rapidapi-key': "055c670110msh464e4b106a8c0e0p13646fjsn55a07716561f"
+		}
+
+	response = requests.request("GET", url, headers=headers, params=querystring)
+
+	ctx.send(response.text)
 
 
 client.loop.create_task(vnllastatusloop())
