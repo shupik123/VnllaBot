@@ -10,6 +10,8 @@ import json
 from mcstatus import MinecraftServer
 import random
 
+starttime = None
+
 server = MinecraftServer.lookup("vnlla.net:25565")
 
 client = commands.Bot(command_prefix = "!")
@@ -17,7 +19,6 @@ client = commands.Bot(command_prefix = "!")
 client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
-# XELADA INPUT DIRECTORY HERE
 xelada = "/home/vnlla/Vnllatoken.json"
 
 try:
@@ -35,10 +36,22 @@ try:
 except:
 	with open(fileName, "w") as f:
 		json.dump([], f)
+		notifylist = []
+
+# getting the plot data
+try:
+	fileName = "plot.json"
+	with open(fileName, "r") as f:
+		plot_data = json.load(f)
+except:
+	with open(fileName, "w") as f:
+		json.dump({}, f)
+		plot_data = {}
 
 # updates status every minute
 async def vnllastatusloop():
 	global notifylist
+	global plot_data
 	await client.wait_until_ready()
 	downtime = 0
 	while True:
@@ -52,6 +65,10 @@ async def vnllastatusloop():
 
 			await client.change_presence(status=discord.Status.online, activity=discord.Game("Server Online ({0}/{1})".format(status.players.online,status.players.max)))
 			downtime = 0
+
+			# plot data
+			plot_data[round(time.time())] = status.players.online
+
 
 		except IOError:
 			if downtime < 5:
@@ -69,6 +86,12 @@ async def vnllastatusloop():
 
 			downtime += 0.5
 
+			# plot data
+			plot_data[round(time.time())] = 0
+
+		with open("plot.json", "w") as f:
+			json.dump(plot_data, f)
+			
 		await asyncio.sleep(30)
 
 
