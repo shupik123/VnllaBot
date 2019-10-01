@@ -208,7 +208,7 @@ async def test(ctx):
 
 @client.command(pass_context = True)
 async def stats(ctx):
-	await ctx.send(plot_data)
+	await ctx.send(str(plot_data)[0:1000])
 	
 
 client.loop.create_task(vnllastatusloop())
