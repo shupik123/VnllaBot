@@ -205,6 +205,10 @@ async def hack(ctx):
 async def test(ctx):
 	await ctx.send("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
+
+@client.command(pass_context = True)
+async def stats(ctx):
+	ctx.send(plot_data)
 	
 
 client.loop.create_task(vnllastatusloop())
