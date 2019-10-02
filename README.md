@@ -11,8 +11,8 @@ __Commands:__
  - `!notify` : will ping you when a spot on the server opens up.
  - `!add` : adds you to the notification list of when vnlla goes down and back up.
  - `!remove` : removes you from the notification list.
- - ~`!meme` : gives you a random meme.~
  - `!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.
+ - `!stats` : **NEW!** Shows you a high tech graph of activity on vnlla.net! (5 minute cooldown)
  
  __Features:__
  - Playing `Server online ( player / max )`
