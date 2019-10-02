@@ -9,8 +9,10 @@ import requests
 import json
 from mcstatus import MinecraftServer
 import random
+import plotly.graph_objects as go
 
 starttime = None
+stats_cooldown = 0
 
 server = MinecraftServer.lookup("vnlla.net:25565")
 
@@ -46,12 +48,13 @@ try:
 except:
 	with open(fileName, "w") as f:
 		json.dump({}, f)
-		plot_data = {}
+		plot_data = {'x':[],'y':[]}
 
 # updates status every minute
 async def vnllastatusloop():
 	global notifylist
 	global plot_data
+	global stats_cooldown
 	await client.wait_until_ready()
 	downtime = 0
 	while True:
@@ -67,7 +70,8 @@ async def vnllastatusloop():
 			downtime = 0
 
 			# plot data
-			plot_data[round(time.time())] = status.players.online
+			plot_data['x'].append(time.time())
+			plot_data['y'].append(status.players.online)
 
 
 		except IOError:
@@ -87,7 +91,8 @@ async def vnllastatusloop():
 			downtime += 0.5
 
 			# plot data
-			plot_data[round(time.time())] = 0
+			plot_data['x'].append(time.time())
+			plot_data['y'].append(0)
 
 		with open("plot.json", "w") as f:
 			json.dump(plot_data, f)
@@ -115,6 +120,7 @@ async def help(ctx):
 	embed.add_field(name=add, value='Adds you to the notification list of when vnlla goes down and back up.', inline=False)
 	embed.add_field(name=remove, value='Removes you from the notification list.', inline=False)
 	embed.add_field(name=botstatus, value='Tells you how long the bot has been running.', inline=False)
+	embed.add_field(name=stats, value='**NEW!** Shows you a high tech graph of activity on vnlla.net! (5 minute cooldown)', inline=False)
 	embed.set_footer(text="Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
@@ -207,8 +213,52 @@ async def test(ctx):
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 
 @client.command(pass_context = True)
-async def stats(ctx):
-	await ctx.send(str(plot_data)[0:1000])
+async def stats(ctx, bypass=None):
+	global stats_cooldown
+	global plot_data
+
+	# check if shupik is bypassing cooldown
+	if bypass == None or ctx.message.author.id != 280043108782178305:
+
+		# check if cache should be used
+		time_ago = time.time()-stats_cooldown
+		if time_ago < 300:
+
+			# send message
+			embed=discord.Embed(title="From cache", color=0x62f3ff)
+			await ctx.send(embed=embed)
+			return await ctx.channel.send(file=discord.File(open('vnlla_graph.png','rb'), 'vnlla_graph.png'))
+	
+	# loading gif
+	loading = await ctx.channel.send(file=discord.File(open('loading.gif','rb'), 'loading.gif'))
+
+	# plotly creation
+	fig = go.Figure()
+
+	# generate x data relative to current time
+	data_x = []
+	for i in range(0, len(plot_data['x'])):
+		data_x.append((plot_data['x'][i] - time.time()) / 86400)
+
+	# add data to graph
+	fig.add_trace(go.Scatter(x=data_x, y=plot_data['y'], mode='lines', name='lines'))
+	fig.update_layout(title='vnlla.net Activity', xaxis_title='Time in days before now', yaxis_title='Amount of players online')
+
+	# plotly export
+	fig.write_image("vnlla_graph.png")
+
+	# send message
+	embed=discord.Embed(title="Newly created", color=0x62f3ff)
+	await ctx.send(embed=embed)
+
+	# set cooldown timer
+	stats_cooldown = time.time()
+
+	# remove loading gif
+	await loading.delete()
+
+	# send picture
+	return await ctx.channel.send(file=discord.File(open('vnlla_graph.png','rb'), 'vnlla_graph.png'))
 	
 
 client.loop.create_task(vnllastatusloop())
