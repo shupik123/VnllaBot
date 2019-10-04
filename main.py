@@ -10,6 +10,7 @@ import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord.utils import get
 
 from mcstatus import MinecraftServer
 
@@ -218,12 +219,12 @@ async def test(ctx):
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 
 @client.command(pass_context = True)
-async def stats(ctx, stop_days = -1):
+async def stats(ctx, stop_days = -1.0):
 	global plot_data
 
 	if stop_days <= 0:
 		stop_days = math.inf
-		stop_time = math.inf
+		stop_time = -math.inf
 	else:
 		stop_time = time.time() - (stop_days * 86400)
 	
@@ -231,28 +232,42 @@ async def stats(ctx, stop_days = -1):
 	data_x = []
 	data_y = []
 	for i in range(len(plot_data['x']) - 1, -1, -1):
-		if plot_data['x'][i] <= stop_time:
+		if plot_data['x'][i] >= stop_time:
 			data_x.append((plot_data['x'][i] - time.time()) / 86400)
 			data_y.append(plot_data['y'][i])
 		else: break
 
-	# making plot
-	plt.plot(data_x, data_y)
-	plt.xlabel('Time in days before now')
-	plt.ylabel('Number of players')
-	plt.title('vnlla.net activity')
+	if len(data_y) > 1:
+	
+		# making plot
+		plt.plot(data_x, data_y)
+		plt.xlabel('Time in days before now')
+		plt.ylabel('Number of players')
+		plt.title('vnlla.net activity')
 
-	# send picture
-	buf = io.BytesIO()
-	plt.savefig(buf, edgecolor='none', format='png')
-	buf.seek(0)
+		server = MinecraftServer.lookup('vnlla.net:25565')
+		try:
+			status = server.status()
+			max_players = status.players.max
+		except IOError:
+			max_players = 40
+		plt.ylim([0, max_players])
 
-	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(round(stop_days, 2), color=0xffffff))
-	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
-	await ctx.send(embed=embed)
+		# send picture
+		buf = io.BytesIO()
+		plt.savefig(buf, edgecolor='none', format='png')
+		buf.seek(0)
 
-	await ctx.send(file=discord.File(buf, 'stats.png'))
-	plt.clf()
+		embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(round(stop_days, 2), color=0x1f3354))
+		embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
+		await ctx.send(embed=embed)
+		
+		await ctx.send(file=discord.File(buf, 'stats.png'))
+		plt.clf()
+
+	else:
+		embed = discord.Embed(title=':warning: Error! :warning:', description='Time frame was too small to show any data!', color=0xff0000)
+		await ctx.send(embed=embed)
 	
 
 client.loop.create_task(vnllastatusloop())
