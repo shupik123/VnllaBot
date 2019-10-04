@@ -218,20 +218,15 @@ async def test(ctx):
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 
 @client.command(pass_context = True)
-async def stats(ctx, time_span=math.inf):
+async def stats(ctx):
 	global plot_data
 	
-	time_span *= 86400
-
 	# generate x data relative to current time
 	data_x = []
 	data_y = []
 	for i in range(0, len(plot_data['x'])):
-		if plot_data['x'][-i] > time.time() - time_span:
-			break
-		else:
-			data_x.append((plot_data['x'][-i] - time.time()) / 86400)
-			data_y.append(plot_data['y'][-i])
+		data_x.append((plot_data['x'][i] - time.time()) / 86400)
+		data_y.append(plot_data['y'][i])
 
 	# making plot
 	plt.plot(data_x, data_y)
@@ -243,7 +238,7 @@ async def stats(ctx, time_span=math.inf):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(time_span/86400), color=0xffffff)
+	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format((plot_data['x'][0] - time.time()) / 86400), color=0xffffff)
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(sum(data_y)/len(data_y)), inline=False)
 	await ctx.send(embed=embed)
 
