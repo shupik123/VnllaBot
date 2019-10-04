@@ -247,7 +247,8 @@ async def stats(ctx, time_span=math.inf):
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(sum(data_y)/len(data_y)), inline=False)
 	await ctx.send(embed=embed)
 
-	return await ctx.send(file=discord.File(buf, 'stats.png'))
+	await ctx.send(file=discord.File(buf, 'stats.png'))
+	plt.clf()
 	
 
 client.loop.create_task(vnllastatusloop())
