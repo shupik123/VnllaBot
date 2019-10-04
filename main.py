@@ -223,6 +223,7 @@ async def stats(ctx, stop_days = -1):
 
 	if stop_days <= 0:
 		stop_days = math.inf
+		stop_time = math.inf
 	else:
 		stop_time = time.time() - (stop_days * 86400)
 	
