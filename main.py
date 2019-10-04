@@ -231,7 +231,7 @@ async def stats(ctx, stop_days = -1):
 	data_x = []
 	data_y = []
 	for i in range(len(plot_data['x']) - 1, -1, -1):
-		if plot_data['x'][i] <= stop_time:
+		if plot_data['x'][i] >= stop_time:
 			data_x.append((plot_data['x'][i] - time.time()) / 86400)
 			data_y.append(plot_data['y'][i])
 		else: break
