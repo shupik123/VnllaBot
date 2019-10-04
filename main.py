@@ -227,7 +227,7 @@ async def stats(ctx, time_span=math.inf):
 	data_x = []
 	data_y = []
 	for i in range(0, len(plot_data['x'])):
-		if plot_data['x'][i] < time_span:
+		if plot_data['x'][i] > time.time() - time_span:
 			break
 		else:
 			data_x.append((plot_data['x'][i] - time.time()) / 86400)
