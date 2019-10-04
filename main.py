@@ -238,8 +238,8 @@ async def stats(ctx):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format((time.time() - plot_data['x'][0]) / 86400), color=0xffffff)
-	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(sum(data_y)/len(data_y)), inline=False)
+	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(round((time.time() - plot_data['x'][0]) / 86400, 2)), color=0xffffff)
+	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 	await ctx.send(embed=embed)
 
 	await ctx.send(file=discord.File(buf, 'stats.png'))
