@@ -232,6 +232,7 @@ async def stats(ctx):
 	plt.plot(data_x, data_y)
 	plt.xlabel('Time in days before now')
 	plt.ylabel('Number of players')
+	plt.title('vnlla.net activity')
 
 	# send picture
 	buf = io.BytesIO()
