@@ -218,15 +218,22 @@ async def test(ctx):
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 
 @client.command(pass_context = True)
-async def stats(ctx):
+async def stats(ctx, stop_days = -1):
 	global plot_data
+
+	if stop_days <= 0:
+		stop_days = math.inf
+	else:
+		stop_time = time.time() - (stop_days * 86400)
 	
 	# generate x data relative to current time
 	data_x = []
 	data_y = []
-	for i in range(0, len(plot_data['x'])):
-		data_x.append((plot_data['x'][i] - time.time()) / 86400)
-		data_y.append(plot_data['y'][i])
+	for i in range(len(plot_data['x']) - 1, -1, -1):
+		if plot_data['x'][i] <= stop_time:
+			data_x.append((plot_data['x'][i] - time.time()) / 86400)
+			data_y.append(plot_data['y'][i])
+		else: break
 
 	# making plot
 	plt.plot(data_x, data_y)
@@ -239,7 +246,7 @@ async def stats(ctx):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(round((time.time() - plot_data['x'][0]) / 86400, 2)), color=0xffffff)
+	embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(round(stop_days, 2), color=0xffffff))
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 	await ctx.send(embed=embed)
 
