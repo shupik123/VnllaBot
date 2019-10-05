@@ -127,7 +127,7 @@ async def help(ctx):
 	embed.add_field(name='!add', value='Adds you to the notification list of when vnlla goes down and back up.', inline=False)
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
-	embed.add_field(name='!stats <days in past to view>', value='**NEW!** Shows you a high tech graph of activity on vnlla.net!', inline=False)
+	embed.add_field(name='!stats <`time unit` in past to view> <time unit: (h, d, w)>', value='**NEW!** Shows you a high tech graph of activity on vnlla.net!', inline=False)
 	embed.set_footer(text="[argument]: required input\n <argument>: optional input\nPing @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
