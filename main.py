@@ -96,8 +96,9 @@ async def vnllastatusloop():
 			downtime += 0.5
 
 			# plot data
-			plot_data['x'].append(time.time())
-			plot_data['y'].append(0)
+			if downtime > 2:
+				plot_data['x'].append(time.time())
+				plot_data['y'].append(0)
 
 		with open("plot.json", "w") as f:
 			json.dump(plot_data, f)
@@ -244,7 +245,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	data_x = []
 	data_y = []
 	for i in range(len(temp_pd['x']) - 1, -1, -1):
-		if temp_pd['x'][i] >= stop_time:
+		if temp_pd['x'][i] <= stop_time:
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
 		else: break
