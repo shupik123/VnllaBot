@@ -289,7 +289,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	if stop_time == -math.inf:
+	if stop_time == math.inf:
 		embed = discord.Embed(title='Displaying available activity data for **all time**.')
 	else:
 		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time))
