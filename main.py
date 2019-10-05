@@ -219,55 +219,85 @@ async def test(ctx):
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 
 @client.command(pass_context = True)
-async def stats(ctx, stop_days = -1.0):
+async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	global plot_data
+	# make plot_data not change with temp
+	temp_pd = plot_data
 
-	if stop_days <= 0:
-		stop_days = math.inf
+	# convert time unit input
+	if stop_time <= 0:
 		stop_time = -math.inf
+	elif stop_u == 'w':
+		stop_sec = stop_time * 7 * 86400 #weeks
+		last_time = 'weeks'
+	elif stop_u == 'd':
+		stop_sec = stop_time * 86400 #days
+		last_time = 'days'
+	elif stop_u == 'h':
+		stop_sec = stop_time * 3600 #hours
+		last_time = 'hours'
 	else:
-		stop_time = time.time() - (stop_days * 86400)
+		embed = discord.Embed(title=':warning: Error! :warning:', description='Time unit {} was not recognized!'.format(stop_u), color=0xff0000)
+		return ctx.send(embed=embed)
 	
 	# generate x data relative to current time
 	data_x = []
 	data_y = []
-	for i in range(len(plot_data['x']) - 1, -1, -1):
-		if plot_data['x'][i] >= stop_time:
-			data_x.append((plot_data['x'][i] - time.time()) / 86400)
-			data_y.append(plot_data['y'][i])
+	for i in range(len(temp_pd['x']) - 1, -1, -1):
+		if temp_pd['x'][i] >= stop_time:
+			data_x.append((temp_pd['x'][i] - time.time()))
+			data_y.append(temp_pd['y'][i])
 		else: break
 
-	if len(data_y) > 1:
-	
-		# making plot
-		plt.plot(data_x, data_y)
-		plt.xlabel('Time in days before now')
-		plt.ylabel('Number of players')
-		plt.title('vnlla.net activity')
-
-		server = MinecraftServer.lookup('vnlla.net:25565')
-		try:
-			status = server.status()
-			max_players = status.players.max
-		except IOError:
-			max_players = 40
-		plt.ylim([0, max_players])
-
-		# send picture
-		buf = io.BytesIO()
-		plt.savefig(buf, edgecolor='none', format='png')
-		buf.seek(0)
-
-		embed = discord.Embed(title='Displaying available activity data for the last **{} days**.'.format(round(stop_days, 2), color=0x1f3354))
-		embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
-		await ctx.send(embed=embed)
-		
-		await ctx.send(file=discord.File(buf, 'stats.png'))
-		plt.clf()
-
-	else:
+	# test for not enough data points
+	if len(data_y) < 2:
 		embed = discord.Embed(title=':warning: Error! :warning:', description='Time frame was too small to show any data!', color=0xff0000)
-		await ctx.send(embed=embed)
+		return await ctx.send(embed=embed)
+
+	# figure out time unit for xlabel
+	if (data_x[-1] - data_x[0]) / 3600 <= 48: #hours
+		for i in range(data_x):
+			data_x[i] = data_x[i] / 3600
+			x_time = 'hours'
+	if (data_x[-1] - data_x[0]) / 24 <= 14: #days
+		for i in range(data_x):
+			data_x[i] = data_x[i] / 24
+			x_time = 'days'
+	else: #weeks
+		for i in range(data_x): 
+			data_x[i] = data_x[i] / 7
+			x_time = 'weeks'
+
+	# making plot
+	plt.plot(data_x, data_y)
+	plt.xlabel('Time in {} before now'.format(x_time))
+	plt.ylabel('Number of players')
+	plt.title('vnlla.net activity')
+
+	# max player check
+	server = MinecraftServer.lookup('vnlla.net:25565')
+	try:
+		status = server.status()
+		max_players = status.players.max
+	except IOError:
+		max_players = 40
+	plt.ylim([0, max_players])
+
+	# send picture
+	buf = io.BytesIO()
+	plt.savefig(buf, edgecolor='none', format='png')
+	buf.seek(0)
+
+	if stop_time == -math.inf:
+		embed = discord.Embed(title='Displaying available activity data for **all time**.')
+	else:
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time))
+
+	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
+	await ctx.send(embed=embed)
+		
+	await ctx.send(file=discord.File(buf, 'stats.png'))
+	plt.clf()
 	
 
 client.loop.create_task(vnllastatusloop())
