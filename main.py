@@ -257,11 +257,15 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		return await ctx.send(embed=embed)
 
 	# figure out time unit for xlabel
-	if (data_x[-1] - data_x[0]) / 3600 <= 48: #hours
+	if (data_x[0] - data_x[-1]) / 60 <= 120: #minutes
 		for i in range(len(data_x)):
-			data_x[i] = data_x[i] / 3600
+			data_x[i] = data_x[i] / 60
+			x_time = 'minutes'
+	if (data_x[0] - data_x[-1]) / 60 <= 48: #hours
+		for i in range(len(data_x)):
+			data_x[i] = data_x[i] / 60
 			x_time = 'hours'
-	if (data_x[-1] - data_x[0]) / 24 <= 14: #days
+	if (data_x[0] - data_x[-1]) / 24 <= 14: #days
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 24
 			x_time = 'days'
