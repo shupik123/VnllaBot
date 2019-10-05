@@ -245,7 +245,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	data_x = []
 	data_y = []
 	for i in range(len(temp_pd['x']) - 1, -1, -1):
-		if temp_pd['x'][i] >= stop_sec:
+		if temp_pd['x'][i] >= time.time() - stop_sec:
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
 		else: break
