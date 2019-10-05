@@ -55,7 +55,8 @@ except:
 		json.dump({}, f)
 		plot_data = {'x':[],'y':[]}
 
-# updates status every minute
+
+# updates status every 30s
 async def vnllastatusloop():
 	global notifylist
 	global plot_data
@@ -227,7 +228,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 
 	# convert time unit input
 	if stop_time <= 0:
-		stop_sec = -math.inf
+		stop_sec = math.inf
 	elif stop_u == 'w':
 		stop_sec = stop_time * 7 * 86400 #weeks
 		last_time = 'weeks'
@@ -289,7 +290,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	if stop_sec == -math.inf:
+	if stop_sec == math.inf:
 		embed = discord.Embed(title='Displaying available activity data for **all time**.')
 	else:
 		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time))
