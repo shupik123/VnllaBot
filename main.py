@@ -261,13 +261,13 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 60
 			x_time = 'minutes'
-	if (data_x[0] - data_x[-1]) / 60 <= 48: #hours
+	elif (data_x[0] - data_x[-1]) / 3600 <= 48: #hours
 		for i in range(len(data_x)):
-			data_x[i] = data_x[i] / 60
+			data_x[i] = data_x[i] / 3600
 			x_time = 'hours'
-	if (data_x[0] - data_x[-1]) / 24 <= 14: #days
+	elif (data_x[0] - data_x[-1]) / 86400 <= 14: #days
 		for i in range(len(data_x)):
-			data_x[i] = data_x[i] / 24
+			data_x[i] = data_x[i] / 86400
 			x_time = 'days'
 	else: #weeks
 		for i in range(len(data_x)): 
