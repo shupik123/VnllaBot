@@ -295,9 +295,9 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	buf.seek(0)
 
 	if stop_sec == math.inf:
-		embed = discord.Embed(title='Displaying available activity data for **all time**.')
+		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
 	else:
-		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time))
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 	await ctx.send(embed=embed)
