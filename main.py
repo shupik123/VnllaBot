@@ -60,6 +60,10 @@ except:
 		plot_data = {'x':[],'y':[]}
 
 
+@bot.event
+async def on_command_error(ctx, error):
+    ctx.send('Command not recognized!\n **Use `!help` for a list of commands.**')
+
 # updates status every 30s
 async def vnllastatusloop():
 	global notifylist
@@ -352,8 +356,14 @@ async def data_purge(ctx, confirmation=''):
 @bot.group(pass_context=True, aliases=['econ','ec','e'])
 async def economy(ctx):
     if ctx.invoked_subcommand is None:
-        embed = discord.Embed(title='Showing help for `!economy`', description='You may also use `!econ`, `!ec`, `!e`.')
+        ctx.send('Do `!economy help` for info on economy.')
 
+
+@economy.command(pass_context=True, aliases=['dep'])
+async def deposit(ctx, amount=None):
+	if amount == None:
+		embed = discord.Embed(title='', description='I hope you wanted this command...', color=0xffff00)
+		await ctx.send(embed=embed)
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
