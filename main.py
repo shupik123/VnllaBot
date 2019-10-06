@@ -305,10 +305,10 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
-	file=discord.File(buf, 'stats.png')
+	myfile = discord.File(buf, 'stats.png')
 	embed.set_image(url="attachment://stats.png")
 
-	await ctx.send(embed=embed)
+	await ctx.send(embed=embed, file=myfile)
 
 	plt.clf()
 	
