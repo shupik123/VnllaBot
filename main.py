@@ -304,9 +304,12 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
+
+	file=discord.File(buf, 'stats.png')
+	embed.set_image(url="attachment://stats.png")
+
 	await ctx.send(embed=embed)
-		
-	await ctx.send(file=discord.File(buf, 'stats.png'))
+
 	plt.clf()
 	
 
