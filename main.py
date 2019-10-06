@@ -64,6 +64,8 @@ async def vnllastatusloop():
 	await client.wait_until_ready()
 	downtime = 0
 	while True:
+		plot_data_static = plot_data
+
 		try:
 			status = server.status()
 			if downtime >= 5:
@@ -76,33 +78,33 @@ async def vnllastatusloop():
 			downtime = 0
 
 			# plot data
-			plot_data['x'].append(time.time())
-			plot_data['y'].append(status.players.online)
+			plot_data_static['x'].append(time.time())
+			plot_data_static['y'].append(status.players.online)
 
 
 		except IOError:
 			if downtime < 5:
-				# if it is down for less than 5 minutes set to idle status
-				
-				await client.change_presence(status=discord.Status.idle, activity=discord.Game("Down for {a} min".format(a=downtime)))
-			else:
 				await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game("Down for {a} min".format(a=downtime)))
+
+			# else:
+			# 	await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game("Down for {a} min".format(a=downtime)))
 			
-			if downtime == 5:
-				for tags in notifylist:
-					# notify all people on list that server is down
-					user = await client.fetch_user(tags)
-					await user.send("Vnlla has been down for 5 minutes.")
+			# if downtime == 5:
+			# 	for tags in notifylist:
+			# 		# notify all people on list that server is down
+			# 		user = await client.fetch_user(tags)
+			# 		await user.send("Vnlla has been down for 5 minutes.")
 
 			downtime += 0.5
 
 			# plot data
 			if downtime > 5:
-				plot_data['x'].append(time.time())
-				plot_data['y'].append(0)
+				plot_data_static['x'].append(time.time())
+				plot_data_static['y'].append(0)
 
 		with open("plot.json", "w") as f:
-			json.dump(plot_data, f)
+			json.dump(plot_data_static, f)
+		plot_data = plot_data_static
 			
 		await asyncio.sleep(30)
 
@@ -306,6 +308,33 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	await ctx.send(file=discord.File(buf, 'stats.png'))
 	plt.clf()
 	
+
+@client.command(pass_context = True)
+async def data_purge(ctx, confirmation):
+	global plot_data
+	if ctx.author.id != 280043108782178305:
+		embed = discord.Embed(title=':warning: Error! :warning:', description='This command is exclusive to bot developers!', color=0xff0000)
+		return await ctx.send(embed=embed)
+
+	if confirmation != 'PURGE':
+		embed = discord.Embed(title=':warning: Error! :warning:', description='You must enter `!data_purge PURGE` to confirm this command.', color=0xff0000)
+		return await ctx.send(embed=embed)
+
+	plot_data_static = plot_data
+	for i in range(len(plot_data_static['y'])):
+		if plot_data_static['y'][i] == 0:
+			plot_data_static['x'].pop(i)
+			plot_data_static['y'].pop(i)
+			# adjusting i because of pop
+			i -= 1
+	
+	with open("plot.json", "w") as f:
+		json.dump(plot_data_static, f)
+	
+	plot_data = plot_data_static
+
+	embed = discord.Embed(title='Player data points of `y=0` removed!', description='I hope you wanted this command...', color=0xffff00)
+	return await ctx.send(embed=embed)
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
