@@ -97,7 +97,7 @@ async def vnllastatusloop():
 			downtime += 0.5
 
 			# plot data
-			if downtime > 2:
+			if downtime > 5:
 				plot_data['x'].append(time.time())
 				plot_data['y'].append(0)
 
@@ -127,8 +127,8 @@ async def help(ctx):
 	embed.add_field(name='!add', value='Adds you to the notification list of when vnlla goes down and back up.', inline=False)
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
-	embed.add_field(name='!stats <`time unit` in past to view> <time unit: (h, d, w)>', value='**NEW!** Shows you a high tech graph of activity on vnlla.net!', inline=False)
-	embed.set_footer(text="[argument]: required input\n <argument>: optional input\nPing @shupik#2705 for any needs.")
+	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='**NEW!** Shows you a high tech graph of activity on vnlla.net!', inline=False)
+	embed.set_footer(text="<argument>: required input\n [argument]: optional input\nPing @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
 
@@ -220,6 +220,7 @@ async def test(ctx):
 	await ctx.send("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
 
+
 @client.command(pass_context = True)
 async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	global plot_data
@@ -240,7 +241,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		last_time = 'hours'
 	else:
 		embed = discord.Embed(title=':warning: Error! :warning:', description='Time unit {} was not recognized!'.format(stop_u), color=0xff0000)
-		return ctx.send(embed=embed)
+		return await ctx.send(embed=embed)
 	
 	# generate x data relative to current time
 	data_x = []
