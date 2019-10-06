@@ -16,7 +16,9 @@ from mcstatus import MinecraftServer
 
 import io
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import math
+
 
 starttime = None
 bot_devs = [280043108782178305, 276514261390327811]
@@ -29,6 +31,7 @@ client.remove_command('help')
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
 xelada = "/home/vnlla/Vnllatoken.json"
 
+# token
 try:
 	with open(shupik, "r") as f:
 		token = json.load(f)[0]
@@ -69,18 +72,19 @@ async def vnllastatusloop():
 
 		try:
 			status = server.status()
-			if downtime >= 5:
-				for tags in notifylist:
-					# notify all people on list that server is up
-					user = await client.fetch_user(tags)
-					await user.send("Vnlla is back online.")
+			# if downtime >= 5:
+			# 	for tags in notifylist:
+			# 		# notify all people on list that server is up
+			# 		user = await client.fetch_user(tags)
+			# 		await user.send("Vnlla is back online.")
 
 			await client.change_presence(status=discord.Status.online, activity=discord.Game("Server Online ({0}/{1})".format(status.players.online,status.players.max)))
 			downtime = 0
 
 			# plot data
-			plot_data_static['x'].append(time.time())
-			plot_data_static['y'].append(status.players.online)
+			if status.players.online >= 3:
+				plot_data_static['x'].append(time.time())
+				plot_data_static['y'].append(status.players.online)
 
 
 		except IOError:
@@ -130,8 +134,9 @@ async def help(ctx):
 	embed.add_field(name='!add', value='Adds you to the notification list of when vnlla goes down and back up.', inline=False)
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
-	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='**NEW!** Shows you a high tech graph of activity on vnlla.net!', inline=False)
-	embed.set_footer(text="<argument>: required input\n [argument]: optional input\nPing @shupik#2705 for any needs.")
+	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
+	embed.add_field(name='!economy | !econ | !ec | !e', value='Use command for more info.', inline=False)
+	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
 
@@ -182,11 +187,13 @@ async def add(ctx):
 	global notifylist
 	if ctx.message.author.id in notifylist:
 		return await ctx.send("You are already on the notify list.\nUse `!remove` to get off the list.")
+
 	notifylist.append(int(ctx.message.author.id))
 	print("{person} was added to notifylist".format(person = ctx.message.author))
 	with open(fileName, "w") as f:
 		# writes the new person to the .json file
 		json.dump(notifylist, f)
+
 	await ctx.send("You've been added to the server notification list.\nUse `!remove` to get off the list.")
 
 
@@ -196,10 +203,12 @@ async def remove(ctx):
 	if ctx.message.author.id not in notifylist:
 		return await ctx.send("You are not on the notify list.\nUse `!add` to get on the list.")
 	notifylist.remove(int(ctx.message.author.id))
+
 	print("{person} was removed from notifylist".format(person = ctx.message.author))
 	with open(fileName, "w") as f:
 		# removes the new person from the .json file
 		json.dump(notifylist, f)
+
 	await ctx.send("You've been removed from the server notification list.\nUse `!add` to get on the list.")
 
 
@@ -246,7 +255,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		embed = discord.Embed(title=':warning: Error! :warning:', description='Time unit {} was not recognized!'.format(stop_u), color=0xff0000)
 		return await ctx.send(embed=embed)
 	
-	# generate x data relative to current time
+	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
 	for i in range(len(temp_pd['x']) - 1, -1, -1):
@@ -306,7 +315,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
 	myfile = discord.File(buf, 'stats.png')
-	embed.set_image(url="attachment://stats.png")
+	embed.set_image(url='attachment://stats.png')
 
 	await ctx.send(embed=embed, file=myfile)
 
@@ -336,8 +345,15 @@ async def data_purge(ctx, confirmation=''):
 	
 	plot_data = plot_data_static
 
-	embed = discord.Embed(title='Player data points of `y=0` removed!', description='I hope you wanted this command...', color=0xffff00)
+	embed = discord.Embed(title='Player data points of `y<3` removed!', description='I hope you wanted this command...', color=0xffff00)
 	return await ctx.send(embed=embed)
+
+
+@bot.group(pass_context=True, aliases=['econ','ec','e'])
+async def economy(ctx):
+    if ctx.invoked_subcommand is None:
+        embed = discord.Embed(title='Showing help for `!economy`', description='You may also use `!econ`, `!ec`, `!e`.')
+
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
