@@ -325,9 +325,6 @@ async def data_purge(ctx, confirmation=''):
 		if plot_data_static['y'][i] < 3:
 			plot_data_static['x'].pop(i)
 			plot_data_static['y'].pop(i)
-
-			# adjusting i because of pop
-			i -= 1
 			
 	
 	with open("plot.json", "w") as f:
