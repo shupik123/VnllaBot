@@ -60,7 +60,7 @@ except:
 		plot_data = {'x':[],'y':[]}
 
 
-@bot.event
+@client.event
 async def on_command_error(ctx, error):
     ctx.send('Command not recognized!\n **Use `!help` for a list of commands.**')
 
@@ -353,7 +353,7 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-@bot.group(pass_context=True, aliases=['econ','ec','e'])
+@client.group(pass_context=True, aliases=['econ','ec','e'])
 async def economy(ctx):
     if ctx.invoked_subcommand is None:
         ctx.send('Do `!economy help` for info on economy.')
