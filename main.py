@@ -310,7 +310,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	
 
 @client.command(pass_context = True)
-async def data_purge(ctx, confirmation):
+async def data_purge(ctx, confirmation=''):
 	global plot_data
 	if ctx.author.id != 280043108782178305:
 		embed = discord.Embed(title=':warning: Error! :warning:', description='This command is exclusive to bot developers!', color=0xff0000)
