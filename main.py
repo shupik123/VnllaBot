@@ -230,13 +230,13 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	# convert time unit input
 	if stop_time <= 0:
 		stop_sec = math.inf
-	elif stop_u == 'w':
+	elif stop_u in ['w', 'wk', 'week', 'weeks']:
 		stop_sec = stop_time * 7 * 86400 #weeks
 		last_time = 'weeks'
-	elif stop_u == 'd':
+	elif stop_u in ['d', 'day', 'days']:
 		stop_sec = stop_time * 86400 #days
 		last_time = 'days'
-	elif stop_u == 'h':
+	elif stop_u in ['h', 'hr', 'hour', 'hours']:
 		stop_sec = stop_time * 3600 #hours
 		last_time = 'hours'
 	else:
