@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import math
 
 starttime = None
+bot_devs = [280043108782178305, 276514261390327811]
 
 server = MinecraftServer.lookup("vnlla.net:25565")
 
@@ -312,7 +313,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 @client.command(pass_context = True)
 async def data_purge(ctx, confirmation=''):
 	global plot_data
-	if ctx.author.id != 280043108782178305:
+	if ctx.author.id not in bot_devs:
 		embed = discord.Embed(title=':warning: Error! :warning:', description='This command is exclusive to bot developers!', color=0xff0000)
 		return await ctx.send(embed=embed)
 
