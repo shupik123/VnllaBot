@@ -62,7 +62,7 @@ except:
 
 @client.event
 async def on_command_error(ctx, error):
-    ctx.send('Command not recognized!\n **Use `!help` for a list of commands.**')
+    await ctx.send('Command not recognized!\n **Use `!help` for a list of commands.**')
 
 # updates status every 30s
 async def vnllastatusloop():
@@ -356,7 +356,7 @@ async def data_purge(ctx, confirmation=''):
 @client.group(pass_context=True, aliases=['econ','ec','e'])
 async def economy(ctx):
     if ctx.invoked_subcommand is None:
-        ctx.send('Do `!economy help` for info on economy.')
+        await ctx.send('Do `!economy help` for info on economy.')
 
 
 @economy.command(pass_context=True, aliases=['dep'])
