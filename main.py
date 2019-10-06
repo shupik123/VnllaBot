@@ -326,9 +326,10 @@ async def data_purge(ctx, confirmation=''):
 			plot_data_static['x'].pop(i)
 			plot_data_static['y'].pop(i)
 
-			print('removed point')
 			# adjusting i because of pop
 			i -= 1
+		print(plot_data_static['y'][i])
+			
 	
 	with open("plot.json", "w") as f:
 		json.dump(plot_data_static, f)
