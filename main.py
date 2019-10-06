@@ -325,6 +325,8 @@ async def data_purge(ctx, confirmation=''):
 		if plot_data_static['y'][i] == 0:
 			plot_data_static['x'].pop(i)
 			plot_data_static['y'].pop(i)
+
+			print('removed point')
 			# adjusting i because of pop
 			i -= 1
 	
