@@ -61,9 +61,9 @@ except:
 		plot_data = {'x':[],'y':[]}
 
 
-@client.event
-async def on_command_error(ctx, error):
-    await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
+# @client.event
+# async def on_command_error(ctx, error):
+#     await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
 
 # updates status every 30s
 async def vnllastatusloop():
