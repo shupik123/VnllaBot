@@ -268,11 +268,6 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
 
-	fit = np.polyfit(data_x, data_y, 1)
-	fit_fn = np.poly1d(fit)
-	data_ry = [fit_fn(data_x[0]), fit_fn(data_x[-1])]
-	data_rx = [data_x[0], data_x[-1]]
-
 	# test for not enough data points
 	if len(data_y) < 2:
 		embed = discord.Embed(title=':warning: Error! :warning:', description='Time frame was too small to show any data!', color=0xff0000)
@@ -295,6 +290,12 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		for i in range(len(data_x)): 
 			data_x[i] = data_x[i] / 7
 			x_time = 'weeks'
+
+	# create regression data
+	fit = np.polyfit(data_x, data_y, 1)
+	fit_fn = np.poly1d(fit)
+	data_ry = [fit_fn(data_x[0]), fit_fn(data_x[-1])]
+	data_rx = [data_x[0], data_x[-1]]
 
 	# making plot
 	plt.plot(data_x, data_y, color='lime', label='Main')
