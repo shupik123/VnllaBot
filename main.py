@@ -298,10 +298,11 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 
 	# making plot
 	plt.plot(data_x, data_ry, color='lime', label='Main')
-	plt.plot(data_x, data_ry, color='orange', label='Regression')
+	plt.plot(data_rx, data_ry, color='orange', label='Regression')
 	plt.xlabel('Time in {} before now'.format(x_time))
 	plt.ylabel('Number of players')
 	plt.title('vnlla.net activity')
+	plt.legend()
 
 	# max player check
 	server = MinecraftServer.lookup('vnlla.net:25565')
