@@ -18,6 +18,7 @@ import io
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import math
+import numpy as np
 
 
 starttime = None
@@ -62,7 +63,7 @@ except:
 
 @client.event
 async def on_command_error(ctx, error):
-    await ctx.send('Command not recognized!\n **Use `!help` for a list of commands.**')
+    await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
 
 # updates status every 30s
 async def vnllastatusloop():
@@ -139,7 +140,7 @@ async def help(ctx):
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
-	embed.add_field(name='!economy | !econ | !ec | !e', value='Use command for more info.', inline=False)
+	embed.add_field(name='!economy | !econ | !ec | !e', value='Use `!economy help` for more info.', inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
@@ -266,7 +267,10 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 		if temp_pd['x'][i] >= time.time() - stop_sec:
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
-		else: break
+
+	fit = np.polyfit(data_x, data_y, 1)
+	fit_fn = np.poly1d(fit)
+	data_ry = [fit_fn(data_x[0]), fit_fn(data_x[-1])]
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -292,7 +296,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 			x_time = 'weeks'
 
 	# making plot
-	plt.plot(data_x, data_y)
+	plt.plot(data_x, data_y, color='lime', label='Main')
+	plt.plot(data_x, data_ry, color='orange', label='Regression')
 	plt.xlabel('Time in {} before now'.format(x_time))
 	plt.ylabel('Number of players')
 	plt.title('vnlla.net activity')
