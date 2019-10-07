@@ -298,8 +298,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	data_rx = [data_x[0], data_x[-1]]
 
 	# making plot
-	plt.plot(data_x, data_y, color='lime', label='Main')
-	plt.plot(data_rx, data_ry, color='orange', label='Regression')
+	plt.plot(data_x, data_y, color='navy', linewidth=2, label='Main')
+	plt.plot(data_rx, data_ry, color='orange', linewidth=6, label='Regression')
 	plt.xlabel('Time in {} before now'.format(x_time))
 	plt.ylabel('Number of players')
 	plt.title('vnlla.net activity')
