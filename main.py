@@ -271,6 +271,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 	fit = np.polyfit(data_x, data_y, 1)
 	fit_fn = np.poly1d(fit)
 	data_ry = [fit_fn(data_x[0]), fit_fn(data_x[-1])]
+	data_rx = [data_x[0], data_x[-1]]
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -296,7 +297,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 			x_time = 'weeks'
 
 	# making plot
-	plt.plot(data_x, data_y, color='lime', label='Main')
+	plt.plot(data_x, data_ry, color='lime', label='Main')
 	plt.plot(data_x, data_ry, color='orange', label='Regression')
 	plt.xlabel('Time in {} before now'.format(x_time))
 	plt.ylabel('Number of players')
