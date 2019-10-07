@@ -239,7 +239,7 @@ async def test(ctx):
 
 
 @client.command(pass_context = True)
-async def stats(ctx, stop_time=-1.0, stop_u ='d'):
+async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	global plot_data
 	# make plot_data not change with temp
 	temp_pd = plot_data
@@ -299,11 +299,12 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d'):
 
 	# making plot
 	plt.plot(data_x, data_y, color='navy', linewidth=1, label='Main')
-	plt.plot(data_rx, data_ry, color='orange', linewidth=5, label='Regression')
+	if regression == '-r':
+		plt.plot(data_rx, data_ry, color='orange', linewidth=5, label='Regression')
+		plt.legend()
 	plt.xlabel('Time in {} before now'.format(x_time))
 	plt.ylabel('Number of players')
 	plt.title('vnlla.net activity')
-	plt.legend()
 
 	# max player check
 	server = MinecraftServer.lookup('vnlla.net:25565')
