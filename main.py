@@ -1,25 +1,24 @@
 # Works with Python 3.6
 
-import os
-import time
-import requests
-import json
-import random
-
 import asyncio
+import io
+import json
+import math
+import os
+import random
+import sys
+import time
+import pandas as pd
+
 import discord
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import requests
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
-
 from mcstatus import MinecraftServer
-
-import io
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import math
-import numpy as np
-
 
 starttime = None
 bot_devs = [280043108782178305, 276514261390327811]
@@ -30,15 +29,24 @@ client = commands.Bot(command_prefix = "!")
 client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
-xelada = "/home/vnlla/Vnllatoken.json"
+xelada = "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\Vnllatoken.json"
+vps = "/home/vnlla/Vnllatoken.json"
 
 # token
 try:
-	with open(shupik, "r") as f:
+	with open(vps, "r") as f:
 		token = json.load(f)[0]
 except:
-	with open(xelada, "r") as f:
-		token = json.load(f)[0]
+	try:
+		with open(shupik, "r") as f:
+			token = json.load(f)[0]
+	except:
+		try:
+			with open(xelada, "r") as f:
+				token = json.load(f)[0]
+		except:
+			print("No valid token found.")
+			sys.exit(0)
 
 # getting the list of people that want to be notified
 try:
@@ -61,9 +69,9 @@ except:
 		plot_data = {'x':[],'y':[]}
 
 
-# @client.event
-# async def on_command_error(ctx, error):
-#     await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
+@client.event
+async def on_command_error(ctx, error):pass
+#    await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
 
 # updates status every 30s
 async def vnllastatusloop():
@@ -246,7 +254,12 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 
 	# convert time unit input
 	if stop_time <= 0:
-		stop_sec = math.inf
+		stop_sec = time.time() - temp_pd['x'][0]
+		last_time = 'eternity'
+		stop_time = ""
+	elif stop_u in ['m', 'mn', 'month', 'months']:
+		stop_sec = stop_time * 7 * 86400 * 4 #months
+		last_time = 'months'
 	elif stop_u in ['w', 'wk', 'week', 'weeks']:
 		stop_sec = stop_time * 7 * 86400 #weeks
 		last_time = 'weeks'
@@ -286,10 +299,20 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 86400
 			x_time = 'days'
-	else: #weeks
+	elif (data_x[0] - data_x[-1]) / 604800 <= 8: #weeks
 		for i in range(len(data_x)): 
-			data_x[i] = data_x[i] / 7
+			data_x[i] = data_x[i] / 604800
 			x_time = 'weeks'
+	else: # months
+		for i in range(len(data_x)): 
+			data_x[i] = data_x[i] / 2419200
+			x_time = 'months'
+
+	new_x = data_x.copy()
+	new_y = data_y.copy()
+	df = pd.DataFrame(new_y, index=new_x)
+	df_average = df.rolling(min_periods=1, center=True, window=int(len(data_x)/75)).mean() # smaller window = more spikes
+	plt.plot(new_x, df_average, color="green", linewidth=2, label="Rolling")
 
 	# create regression data
 	fit = np.polyfit(data_x, data_y, 1)
@@ -298,7 +321,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	data_rx = [data_x[0], data_x[-1]]
 
 	# making plot
-	plt.plot(data_x, data_y, color='navy', linewidth=1, label='Main')
+	plt.plot(data_x, data_y, color='navy', linewidth=1, label='Main', alpha=0.1)
+
 	if regression == '-r':
 		plt.plot(data_rx, data_ry, color='orange', linewidth=5, label='Regression')
 		plt.legend()
@@ -323,7 +347,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	if stop_sec == math.inf:
 		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
 	else:
-		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(stop_time, last_time), color=0x57de45)
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[-1])), x_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
