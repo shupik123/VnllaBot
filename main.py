@@ -148,6 +148,7 @@ async def help(ctx):
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
+	embed.add_field(name='**NEW:** !appeal', value='Explains to you the appeal process', inline=False)
 	embed.add_field(name='!economy | !econ | !ec | !e', value='Use `!economy help` for more info.', inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
@@ -358,6 +359,16 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 
 	plt.clf()
 	
+
+@client.command(pass_context = True)
+async def appeal(ctx):
+	embed=discord.Embed(title=" ", description="So, you've been banned for some reason. You want to appeal? These links should help you out!", color=0x800000)
+	embed.set_author(name="How to appeal")
+	embed.add_field(name="Create a forum account:", value="http://forum.vnlla.org/ucp.php?mode=register", inline=False)
+	embed.add_field(name="Create a ban appeal:", value="http://forum.vnlla.org/posting.php?mode=post&f=16", inline=False)
+	embed.set_footer(text="Go to #discussion_staff_contact for any needs. | Don't spam the staff.")
+	await ctx.send(embed=embed)
+
 
 @client.command(pass_context = True)
 async def data_purge(ctx, confirmation=''):
