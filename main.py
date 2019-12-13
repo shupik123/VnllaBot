@@ -10,14 +10,17 @@ import sys
 import time
 import pandas as pd
 
-import discord
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
+
+import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
+
+import ksoftapi
 from mcstatus import MinecraftServer
 
 starttime = None
@@ -26,6 +29,7 @@ bot_devs = [280043108782178305, 276514261390327811]
 server = MinecraftServer.lookup("vnlla.net:25565")
 
 client = commands.Bot(command_prefix = "!")
+ksoft_client = ksoftapi.Client(api_key='pIgkRzphbqPCHDrCUYZWbFo4iKciVJRn')
 client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
@@ -68,10 +72,6 @@ except:
 		json.dump({}, f)
 		plot_data = {'x':[],'y':[]}
 
-
-@client.event
-async def on_command_error(ctx, error):pass
-#    await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
 
 # updates status every 30s
 async def vnllastatusloop():
@@ -149,7 +149,6 @@ async def help(ctx):
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
 	embed.add_field(name='**NEW:** !appeal', value='Explains to you the appeal process', inline=False)
-	embed.add_field(name='!economy | !econ | !ec | !e', value='Use `!economy help` for more info.', inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
@@ -397,17 +396,26 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-@client.group(pass_context=True, aliases=['econ','ec','e'])
-async def economy(ctx):
-    if ctx.invoked_subcommand is None:
-        await ctx.send('Do `!economy help` for info on economy.')
+@client.command(pass_context = True)
+async def meme(ctx, *search):
+	search = ' '.join(search)
+	img = await ksoft_client.random_meme()
+
+	embed = discord.Embed(title=img.title, url=img.source)
+	embed.set_image(url=img.url)
+	embed.set_footer(text="▲{0.upvotes} | ▼{0.downvotes}".format(img))
+	await ctx.send(embed=embed)
 
 
-@economy.command(pass_context=True, aliases=['dep'])
-async def deposit(ctx, amount=None):
-	if amount == None:
-		embed = discord.Embed(title='', description='I hope you wanted this command...', color=0xffff00)
-		await ctx.send(embed=embed)
+@client.command(pass_context = True)
+async def echo(ctx, channel: int, *text):
+	if ctx.author.id not in bot_devs:
+		return
+	text = ' '.join(text)
+
+	channel = client.get_channel(channel)
+	await channel.send(text)
+	
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
