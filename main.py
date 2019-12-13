@@ -20,7 +20,6 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
 
-import ksoftapi
 from mcstatus import MinecraftServer
 
 starttime = None
@@ -29,7 +28,6 @@ bot_devs = [280043108782178305, 276514261390327811]
 server = MinecraftServer.lookup("vnlla.net:25565")
 
 client = commands.Bot(command_prefix = "!")
-ksoft_client = ksoftapi.Client(api_key='pIgkRzphbqPCHDrCUYZWbFo4iKciVJRn')
 client.remove_command('help')
 
 shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
@@ -396,15 +394,15 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-@client.command(pass_context = True)
-async def meme(ctx, *search):
-	search = ' '.join(search)
-	img = await ksoft_client.random_meme()
+# @client.command(pass_context = True)
+# async def meme(ctx, *search):
+# 	search = ' '.join(search)
+# 	img = await ksoft_client.random_meme()
 
-	embed = discord.Embed(title=img.title, url=img.source)
-	embed.set_image(url=img.url)
-	embed.set_footer(text="▲{0.upvotes} | ▼{0.downvotes}".format(img))
-	await ctx.send(embed=embed)
+# 	embed = discord.Embed(title=img.title, url=img.source)
+# 	embed.set_image(url=img.url)
+# 	embed.set_footer(text="▲{0.upvotes} | ▼{0.downvotes}".format(img))
+# 	await ctx.send(embed=embed)
 
 
 @client.command(pass_context = True)
