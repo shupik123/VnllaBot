@@ -30,25 +30,43 @@ server = MinecraftServer.lookup("vnlla.net:25565")
 client = commands.Bot(command_prefix = "!")
 client.remove_command('help')
 
-shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
-xelada = "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\Vnllatoken.json"
-vps = "/home/vnlla/Vnllatoken.json"
+shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\"
+xelada = "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\"
+vps = "/home/vnlla/"
 
-# token
+# discord token
 try:
-	with open(vps, "r") as f:
+	with open(vps+"Vnllatoken.json", "r") as f:
 		token = json.load(f)[0]
 except:
 	try:
-		with open(shupik, "r") as f:
+		with open(shupik+"Vnllatoken.json", "r") as f:
 			token = json.load(f)[0]
 	except:
 		try:
-			with open(xelada, "r") as f:
+			with open(xelada+"Vnllatoken.json", "r") as f:
 				token = json.load(f)[0]
 		except:
-			print("No valid token found.")
+			print("No valid discord token found.")
 			sys.exit(0)
+
+# ksoft token
+# try:
+# 	with open(vps+"KsoftToken.json", "r") as f:
+# 		ksoft_token = json.load(f)[0]
+# except:
+# 	try:
+# 		with open(shupik+"KsoftToken.json", "r") as f:
+# 			ksoft_token = json.load(f)[0]
+# 	except:
+# 		try:
+# 			with open(xelada+"KsoftToken.json", "r") as f:
+# 				ksoft_token = json.load(f)[0]
+# 		except:
+# 			print("No valid ksoftapi token found.")
+# 			sys.exit(0)
+
+# ksoft_client = ksoftapi.Client(api_key=ksoft_token)
 
 # getting the list of people that want to be notified
 try:
