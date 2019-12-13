@@ -14,6 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
+import ksoftapi
 
 import discord
 from discord.ext import commands
@@ -51,22 +52,22 @@ except:
 			sys.exit(0)
 
 # ksoft token
-# try:
-# 	with open(vps+"KsoftToken.json", "r") as f:
-# 		ksoft_token = json.load(f)[0]
-# except:
-# 	try:
-# 		with open(shupik+"KsoftToken.json", "r") as f:
-# 			ksoft_token = json.load(f)[0]
-# 	except:
-# 		try:
-# 			with open(xelada+"KsoftToken.json", "r") as f:
-# 				ksoft_token = json.load(f)[0]
-# 		except:
-# 			print("No valid ksoftapi token found.")
-# 			sys.exit(0)
+try:
+	with open(vps+"KsoftToken.json", "r") as f:
+		ksoft_token = json.load(f)[0]
+except:
+	try:
+		with open(shupik+"KsoftToken.json", "r") as f:
+			ksoft_token = json.load(f)[0]
+	except:
+		try:
+			with open(xelada+"KsoftToken.json", "r") as f:
+				ksoft_token = json.load(f)[0]
+		except:
+			print("No valid ksoftapi token found.")
+			sys.exit(0)
 
-# ksoft_client = ksoftapi.Client(api_key=ksoft_token)
+ksoft_client = ksoftapi.Client(api_key=ksoft_token)
 
 # getting the list of people that want to be notified
 try:
@@ -164,7 +165,8 @@ async def help(ctx):
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
-	embed.add_field(name='**NEW:** !appeal', value='Explains to you the appeal process', inline=False)
+	embed.add_field(name='!appeal', value='Explains to you the appeal process', inline=False)
+	embed.add_field(name='**IT\'S BACK:** !meme', value=random.choice['Big chungus','UwU','You\'re gonna have a bad time.',':eggplant:',':peach:'], inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
@@ -412,15 +414,18 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-# @client.command(pass_context = True)
-# async def meme(ctx, *search):
-# 	search = ' '.join(search)
-# 	img = await ksoft_client.random_meme()
+@client.command(pass_context = True)
+async def meme(ctx):
+	# random meme
+	img = await ksoft_client.random_meme()
+	# random color
+	color = int("%06x" % random.randint(0, 0xFFFFFF), 16)
 
-# 	embed = discord.Embed(title=img.title, url=img.source)
-# 	embed.set_image(url=img.url)
-# 	embed.set_footer(text="▲{0.upvotes} | ▼{0.downvotes}".format(img))
-# 	await ctx.send(embed=embed)
+	embed = discord.Embed(title=img.title, url=img.source, color=color)
+	embed.set_image(url=img.url)
+	embed.set_footer(text="👍{0.upvotes} | 👎{0.downvotes} | 💬{0.comments}".format(img))
+
+	await ctx.send(embed=embed)
 
 
 @client.command(pass_context = True)
