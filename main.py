@@ -306,8 +306,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 		else:
 			data_x.append((temp_pd['x'][index] - time.time()))
 			data_y.append(temp_pd['y'][index])
-			index += 1;
 			t = temp_pd['x'][index];
+			index += 1;
 		t += 30;
 
 	# test for not enough data points
