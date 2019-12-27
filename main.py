@@ -292,10 +292,14 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
-	for i in range(len(temp_pd['x']) - 1, -1, -1):
+	i = time.time() - stop_sec;
+	for t in range(time.time() - stop_sec, time.time()):
+		if temp_pd['x'][i] == null:
+			i = min(temp_pd['x'], key=lambda x:abs(x-i))
 		if temp_pd['x'][i] >= time.time() - stop_sec:
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
+		i += 30;
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -327,7 +331,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	new_x = data_x.copy()
 	new_y = data_y.copy()
 	df = pd.DataFrame(new_y, index=new_x)
-	df_average = df.rolling(min_periods=1, center=True, window=int(len(data_x)/75)).mean() # smaller window = more spikes
+	df_average = df.rolling(min_periods=1, center=True, window=int(len(data_x)/75)).mean() # smaller window = more spikes. 
+	# Therefore, more data = less spikes (easier to look at)
 	plt.plot(new_x, df_average, color="green", linewidth=2, label="Rolling")
 
 	# create regression data
