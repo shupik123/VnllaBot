@@ -14,7 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-import ksoftapi
+# import ksoftapi
 
 import discord
 from discord.ext import commands
@@ -67,7 +67,7 @@ except:
 			print("No valid ksoftapi token found.")
 			sys.exit(0)
 
-ksoft_client = ksoftapi.Client(api_key=ksoft_token)
+# ksoft_client = ksoftapi.Client(api_key=ksoft_token)
 
 # getting the list of people that want to be notified
 try:
@@ -178,7 +178,8 @@ async def vnlla(ctx):
 		pass
 	except IOError:
 		return await ctx.send("The server is currently offline.")
-	await ctx.send(embed=discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x1f3354))
+	embed = discord.Embed(title="The server has **{0}/{1}** players.".format(status.players.online, status.players.max), color=0x1f3354)
+	embed.add_field(name="__**People:**__", value=", ".join(server.query().Players.names))
 
 
 @client.command(pass_context=True)
@@ -414,7 +415,7 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-@client.command(pass_context = True)
+'''@client.command(pass_context = True)
 async def meme(ctx):
 	# random meme
 	img = await ksoft_client.random_meme()
@@ -425,7 +426,7 @@ async def meme(ctx):
 	embed.set_image(url=img.url)
 	embed.set_footer(text="👍{0.upvotes} | 👎{0.downvotes} | 💬{0.comments}".format(img))
 
-	await ctx.send(embed=embed)
+	await ctx.send(embed=embed)'''
 
 
 @client.command(pass_context = True)
