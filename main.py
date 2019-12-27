@@ -296,10 +296,10 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	i = time.time() - stop_sec;
 	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i))
 	
-	for _ in range(index, len(temp_pd['x'])):
-		print(index, t);
-		data_x.append((temp_pd['x'][index] - time.time()))
-		data_y.append(temp_pd['y'][index])
+	for _ in range(int(t), int(time.time())):
+		if temp_pd['x'][index]:
+			data_x.append((temp_pd['x'][index] - time.time()))
+			data_y.append(temp_pd['y'][index])
 		t += 30;
 		index += 1;
 
