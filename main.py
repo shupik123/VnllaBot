@@ -294,13 +294,15 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	data_y = []
 	
 	i = time.time() - stop_sec;
-	index = min(range(len(temp_pd['x'])), key=lambda x:abs(x-i))
-	print("i:",i, time.time())
-	for t in range(index, len(temp_pd['x'])):
-		print(index, len(temp_pd['x']));
+	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x-i))
+	
+	for _ in range(index, len(temp_pd['x'])):
+		print(index, t);
 		if temp_pd['x'][t] >= time.time() - stop_sec:
-			data_x.append((temp_pd['x'][t] - time.time()))
-			data_y.append(temp_pd['y'][t])
+			data_x.append((temp_pd['x'][index] - time.time()))
+			data_y.append(temp_pd['y'][index])
+		t += 30;
+		index++;
 
 	# test for not enough data points
 	if len(data_y) < 2:
