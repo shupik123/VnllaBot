@@ -302,7 +302,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 		if index >= len(temp_pd['x']) or temp_pd['x'][index] >= t:
 			data_x.append(t-time.time());
 			#data_y.append(temp_pd['y'][index-20160]);
-			data_y.append(40);
+			data_y.append(0);
 		else:
 			data_x.append((temp_pd['x'][index] - time.time()))
 			data_y.append(temp_pd['y'][index])
