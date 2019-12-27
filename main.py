@@ -298,9 +298,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	for t in range(index, len(temp_pd['x'])):
 		print(index, t);
 		if temp_pd['x'][t] >= time.time() - stop_sec:
-			data_x.append((temp_pd['x'][i] - time.time()))
-			data_y.append(temp_pd['y'][i])
-		i += 30;
+			data_x.append((temp_pd['x'][t] - time.time()))
+			data_y.append(temp_pd['y'][t])
 
 	# test for not enough data points
 	if len(data_y) < 2:
