@@ -292,7 +292,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
-	i = time.time() - stop_sec;
+	i = int(time.time() - stop_sec);
 	for t in range(int(time.time() - stop_sec), int(time.time())):
 		print(i)
 		if temp_pd['x'][i] == null:
