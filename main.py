@@ -292,12 +292,11 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
-	i = int(time.time() - stop_sec);
-	for t in range(int(time.time() - stop_sec), int(time.time())):
-		print(i)
-		if temp_pd['x'][i] == null:
-			i = int(min(temp_pd['x'], key=lambda x:abs(x-i)))
-		if temp_pd['x'][i] >= time.time() - stop_sec:
+	
+	index = min(temp_pd['x'], key=lambda x:abs(x-i))
+	for t in range(index, len(temp_pd['x'])):
+		print(index, t);
+		if temp_pd['x'][t] >= time.time() - stop_sec:
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
 		i += 30;
