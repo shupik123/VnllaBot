@@ -293,7 +293,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	data_x = []
 	data_y = []
 	i = time.time() - stop_sec;
-	for t in range(time.time() - stop_sec, time.time()):
+	for t in range(int(time.time() - stop_sec), int(time.time())):
 		if temp_pd['x'][i] == null:
 			i = min(temp_pd['x'], key=lambda x:abs(x-i))
 		if temp_pd['x'][i] >= time.time() - stop_sec:
