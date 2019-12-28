@@ -373,6 +373,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	buf = io.BytesIO()
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
+	
+	print(data_x[-1])
 
 	if stop_time == "":
 		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
