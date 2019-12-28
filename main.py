@@ -373,13 +373,11 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	buf = io.BytesIO()
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
-	
-	print(data_x[0])
 
 	if stop_time == "":
 		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
 	else:
-		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[-1])), x_time), color=0x57de45)
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[0])), x_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
