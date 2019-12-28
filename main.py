@@ -292,14 +292,23 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
+	
 	i = time.time() - stop_sec;
-	for t in range(time.time() - stop_sec, time.time()):
-		if temp_pd['x'][i] == null:
-			i = min(temp_pd['x'], key=lambda x:abs(x-i))
-		if temp_pd['x'][i] >= time.time() - stop_sec:
-			data_x.append((temp_pd['x'][i] - time.time()))
-			data_y.append(temp_pd['y'][i])
-		i += 30;
+	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i))
+	
+	for _ in range(int(t), int(time.time()), 30):
+		if index >= len(temp_pd['x']) or temp_pd['x'][index] < t:
+			data_x.append(t-time.time());
+			#data_y.append(temp_pd['y'][index-20160]);
+			data_y.append(20);
+			print(index)
+			#print(len(temp_pd['x']))
+		else:
+			data_x.append((temp_pd['x'][index] - time.time()))
+			data_y.append(temp_pd['y'][index])
+			#t = temp_pd['x'][index]; 
+			index += 1;
+		t += 30;
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -365,10 +374,10 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	if stop_sec == math.inf:
+	if stop_time == "":
 		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
 	else:
-		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[-1])), x_time), color=0x57de45)
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[0])), x_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
