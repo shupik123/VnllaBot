@@ -274,11 +274,13 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	
 	i = time.time() - stop_sec
 	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i)) # find time in data that is closest to requested time
+
+	reverse_time = 1440 # time in seconds to grab data from the past if not available
 	
 	for _ in range(int(t), int(time.time()), 30):
 		if index >= len(temp_pd['x']) or temp_pd['x'][index] < t:
 			data_x.append(t-time.time())
-			data_y.append(temp_pd['y'][index- (20160 if len(temp_pd['x']) > 20160 else len(temp_pd['x']))]) # data 1 week ago
+			data_y.append(temp_pd['y'][index-(reverse_time if len(temp_pd['x']) > reverse_time else len(temp_pd['x']))]) # data 1 week ago
 			#data_y.append(20);
 		else:
 			data_x.append((temp_pd['x'][index] - time.time()))
