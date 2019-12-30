@@ -68,10 +68,6 @@ except:
 		plot_data = {'x':[],'y':[]}
 
 
-@client.event
-async def on_command_error(ctx, error):pass
-#    await ctx.send('Command not recognized!\n**Use `!help` for a list of commands.**')
-
 # updates status every 30s
 async def vnllastatusloop():
 	global notifylist
@@ -147,7 +143,7 @@ async def help(ctx):
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
-	embed.add_field(name='!economy | !econ | !ec | !e', value='Use `!economy help` for more info.', inline=False)
+	embed.add_field(name='**NEW:** !appeal', value='Explains to you the appeal process', inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
@@ -275,10 +271,21 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
-	for i in range(len(temp_pd['x']) - 1, -1, -1):
-		if temp_pd['x'][i] >= time.time() - stop_sec:
-			data_x.append((temp_pd['x'][i] - time.time()))
-			data_y.append(temp_pd['y'][i])
+	
+	i = time.time() - stop_sec;
+	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i))
+	
+	for _ in range(int(t), int(time.time()), 30):
+		if index >= len(temp_pd['x']) or temp_pd['x'][index] < t:
+			data_x.append(t-time.time());
+			data_y.append(temp_pd['y'][index- (20160 if len(temp_pd['x']) > 20160 else len(temp_pd['x']))]); # data 1 week ago
+			#data_y.append(20);
+		else:
+			data_x.append((temp_pd['x'][index] - time.time()))
+			data_y.append(temp_pd['y'][index])
+			#t = temp_pd['x'][index]; 
+			index += 1;
+		t += 30;
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -310,7 +317,8 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	new_x = data_x.copy()
 	new_y = data_y.copy()
 	df = pd.DataFrame(new_y, index=new_x)
-	df_average = df.rolling(min_periods=1, center=True, window=int(len(data_x)/75)).mean() # smaller window = more spikes
+	df_average = df.rolling(min_periods=1, center=True, window=int(len(data_x)/75)).mean() # smaller window = more spikes. 
+	# Therefore, more data = less spikes (easier to look at)
 	plt.plot(new_x, df_average, color="green", linewidth=2, label="Rolling")
 
 	# create regression data
@@ -343,10 +351,10 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	if stop_sec == math.inf:
+	if stop_time == "":
 		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
 	else:
-		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[-1])), x_time), color=0x57de45)
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[0])), x_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
@@ -357,6 +365,16 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 
 	plt.clf()
 	
+
+@client.command(pass_context = True)
+async def appeal(ctx):
+	embed=discord.Embed(title=" ", description="So, you've been banned for some reason. You want to appeal? These links should help you out!", color=0x800000)
+	embed.set_author(name="How to appeal")
+	embed.add_field(name="Create a forum account:", value="http://forum.vnlla.org/ucp.php?mode=register", inline=False)
+	embed.add_field(name="Create a ban appeal:", value="http://forum.vnlla.org/posting.php?mode=post&f=16", inline=False)
+	embed.set_footer(text="Go to #discussion_staff_contact for any needs. | Don't spam the staff.")
+	await ctx.send(embed=embed)
+
 
 @client.command(pass_context = True)
 async def data_purge(ctx, confirmation=''):
@@ -385,17 +403,26 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-@client.group(pass_context=True, aliases=['econ','ec','e'])
-async def economy(ctx):
-    if ctx.invoked_subcommand is None:
-        await ctx.send('Do `!economy help` for info on economy.')
+# @client.command(pass_context = True)
+# async def meme(ctx, *search):
+# 	search = ' '.join(search)
+# 	img = await ksoft_client.random_meme()
+
+# 	embed = discord.Embed(title=img.title, url=img.source)
+# 	embed.set_image(url=img.url)
+# 	embed.set_footer(text="▲{0.upvotes} | ▼{0.downvotes}".format(img))
+# 	await ctx.send(embed=embed)
 
 
-@economy.command(pass_context=True, aliases=['dep'])
-async def deposit(ctx, amount=None):
-	if amount == None:
-		embed = discord.Embed(title='', description='I hope you wanted this command...', color=0xffff00)
-		await ctx.send(embed=embed)
+@client.command(pass_context = True)
+async def echo(ctx, channel: int, *text):
+	if ctx.author.id not in bot_devs:
+		return
+	text = ' '.join(text)
+
+	channel = client.get_channel(channel)
+	await channel.send(text)
+	
 
 client.loop.create_task(vnllastatusloop())
 client.run(token)
