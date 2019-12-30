@@ -272,20 +272,20 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	data_x = []
 	data_y = []
 	
-	i = time.time() - stop_sec;
+	i = time.time() - stop_sec
 	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i))
 	
 	for _ in range(int(t), int(time.time()), 30):
 		if index >= len(temp_pd['x']) or temp_pd['x'][index] < t:
-			data_x.append(t-time.time());
-			data_y.append(temp_pd['y'][index- (20160 if len(temp_pd['x']) > 20160 else len(temp_pd['x']))]); # data 1 week ago
+			data_x.append(t-time.time())
+			data_y.append(temp_pd['y'][index- (20160 if len(temp_pd['x']) > 20160 else len(temp_pd['x']))]) # data 1 week ago
 			#data_y.append(20);
 		else:
 			data_x.append((temp_pd['x'][index] - time.time()))
 			data_y.append(temp_pd['y'][index])
 			#t = temp_pd['x'][index]; 
-			index += 1;
-		t += 30;
+			index += 1
+		t += 30
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -293,19 +293,19 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 		return await ctx.send(embed=embed)
 
 	# figure out time unit for xlabel
-	if (data_x[0] - data_x[-1]) / 60 <= 120: #minutes
+	if (data_x[-1] - data_x[0]) / 60 <= 120: #minutes
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 60
 			x_time = 'minutes'
-	elif (data_x[0] - data_x[-1]) / 3600 <= 48: #hours
+	elif (data_x[-1] - data_x[0]) / 3600 <= 48: #hours
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 3600
 			x_time = 'hours'
-	elif (data_x[0] - data_x[-1]) / 86400 <= 14: #days
+	elif (data_x[-1] - data_x[0]) / 86400 <= 14: #days
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 86400
 			x_time = 'days'
-	elif (data_x[0] - data_x[-1]) / 604800 <= 8: #weeks
+	elif (data_x[-1] - data_x[0]) / 604800 <= 8: #weeks
 		for i in range(len(data_x)): 
 			data_x[i] = data_x[i] / 604800
 			x_time = 'weeks'
