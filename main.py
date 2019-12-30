@@ -34,7 +34,7 @@ tokens = {
 	"xelada": "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\Vnllatoken.json"
 }
 
-token = None;
+token = None
 # token load
 for tok in tokens:
 	try:
@@ -42,6 +42,8 @@ for tok in tokens:
 			token = json.load(f)[0]
 	except:
 		continue
+
+print(token)
 		
 if not token:
 	print("No valid token found.")
