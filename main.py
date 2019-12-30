@@ -31,13 +31,12 @@ client.remove_command('help')
 tokens = {
 	"vps": "/home/vnlla/Vnllatoken.json", 
 	"shupik": "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json",
-	"xelada": "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\Vnllatoken.json"
+	"xelada": "D:\\git\\VnllaBot\\local\\Vnllatoken.json"
 }
 
 token = None
 # token load
-for tok in tokens:
-	print(tok)
+for tok in tokens.values():
 	try:
 		with open(tok, "r") as f:
 			token = json.load(f)[0]
