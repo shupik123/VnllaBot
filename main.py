@@ -37,13 +37,12 @@ tokens = {
 token = None
 # token load
 for tok in tokens:
+	print(tok)
 	try:
 		with open(tok, "r") as f:
 			token = json.load(f)[0]
 	except:
 		continue
-
-print(token)
 		
 if not token:
 	print("No valid token found.")
