@@ -275,7 +275,7 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	i = time.time() - stop_sec
 	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i))
 	
-	for _ in range(int(t), int(time.time()), 30):
+	for _ in range(int(t), int(time.time())+30, 30):
 		if index >= len(temp_pd['x']) or temp_pd['x'][index] < t:
 			data_x.append(t-time.time())
 			data_y.append(temp_pd['y'][index- (20160 if len(temp_pd['x']) > 20160 else len(temp_pd['x']))]) # data 1 week ago
