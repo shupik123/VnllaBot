@@ -28,25 +28,24 @@ server = MinecraftServer.lookup("vnlla.net:25565")
 client = commands.Bot(command_prefix = "!")
 client.remove_command('help')
 
-shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json"
-xelada = "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\Vnllatoken.json"
-vps = "/home/vnlla/Vnllatoken.json"
+tokens = {
+	"vps": "/home/vnlla/Vnllatoken.json", 
+	"shupik": "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json",
+	"xelada": "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\Vnllatoken.json"
+}
 
-# token
-try:
-	with open(vps, "r") as f:
-		token = json.load(f)[0]
-except:
+token = None;
+# token load
+for tok in tokens:
 	try:
-		with open(shupik, "r") as f:
+		with open(tok, "r") as f:
 			token = json.load(f)[0]
 	except:
-		try:
-			with open(xelada, "r") as f:
-				token = json.load(f)[0]
-		except:
-			print("No valid token found.")
-			sys.exit(0)
+		continue
+		
+if not token:
+	print("No valid token found.")
+	sys.exit(0)
 
 # getting the list of people that want to be notified
 try:
