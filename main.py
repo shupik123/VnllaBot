@@ -34,6 +34,11 @@ shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\"
 xelada = "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\"
 vps = "/home/vnlla/"
 
+servers = {
+	328656303742386177: "industrial-nation.us.to:25565",
+	205205049335349248: "vnlla.net:25565",
+}
+
 # discord token
 try:
 	with open(vps+"Vnllatoken.json", "r") as f:
@@ -156,6 +161,11 @@ async def on_ready():
 
 @client.command(pass_context = True)
 async def help(ctx):
+	if ctx.guild.id == 328656303742386177:
+		embed=discord.Embed(title="Github Link", url="https://github.com/shupik123/VnllaBot", color=0x62f3ff)
+		embed.add_field(name='!server', value='Tells you the status of the server.', inline=False)
+		return await ctx.send(embed=embed)
+
 	embed=discord.Embed(title="Github Link", url="https://github.com/shupik123/VnllaBot", color=0x62f3ff)
 	embed.add_field(name='!help', value='You already know.', inline=False)
 	embed.add_field(name='!vnlla', value='Tells you the status of the vnlla minecraft server.', inline=False)
@@ -169,8 +179,12 @@ async def help(ctx):
 	await ctx.send(embed=embed)
 
 
-@client.command(pass_context = True)
+@client.command(pass_context = True, aliases=["server"])
 async def vnlla(ctx):
+	try:
+		server = MinecraftServer.lookup(servers[ctx.guild.id])
+	except:
+		server = MinecraftServer.lookup("vnlla.net:25565")
 	try:
 		status = server.status()
 		pass
@@ -227,7 +241,7 @@ async def add(ctx):
 
 
 @client.command(pass_context = True)
-async def remove(ctx):
+async def remove(ctx):		
 	global notifylist
 	if ctx.message.author.id not in notifylist:
 		return await ctx.send("You are not on the notify list.\nUse `!add` to get on the list.")
@@ -258,9 +272,8 @@ async def hack(ctx):
 
 @client.command(pass_context = True)
 async def test(ctx):
-	await ctx.send("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
-	print("Test command invoked at `{0} > {1}`".format(str(ctx.guild),str(ctx.channel)))
-
+	await ctx.send("Test command invoked at `{0} > {1}`".format(ctx.guild,ctx.channel))
+	print("Test command invoked at `{0} > {1}`\n{2}".format(ctx.guild,ctx.channel, ctx.guild.id))
 
 @client.command(pass_context = True)
 async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
@@ -292,14 +305,14 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
-	i = time.time() - stop_sec;
+	i = time.time() - stop_sec
 	for t in range(time.time() - stop_sec, time.time()):
 		if temp_pd['x'][i] == null:
 			i = min(temp_pd['x'], key=lambda x:abs(x-i))
 		if temp_pd['x'][i] >= time.time() - stop_sec:
 			data_x.append((temp_pd['x'][i] - time.time()))
 			data_y.append(temp_pd['y'][i])
-		i += 30;
+		i += 30
 
 	# test for not enough data points
 	if len(data_y) < 2:
