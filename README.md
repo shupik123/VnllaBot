@@ -12,7 +12,7 @@ __Commands:__
  - `!add` : adds you to the notification list of when vnlla goes down and back up.
  - `!remove` : removes you from the notification list.
  - `!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.
- - `!stats` : **NEW!** Shows you a high tech graph of activity on vnlla.net! (5 minute cooldown)
+ - `!stats` : Shows you a high tech graph of activity on vnlla.net!
  
  __Features:__
  - Playing `Server online ( player / max )`

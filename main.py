@@ -10,16 +10,14 @@ import sys
 import time
 import pandas as pd
 
+import discord
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-
-import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
-
 from mcstatus import MinecraftServer
 
 starttime = None
@@ -30,9 +28,11 @@ server = MinecraftServer.lookup("vnlla.net:25565")
 client = commands.Bot(command_prefix = "!")
 client.remove_command('help')
 
-shupik = "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\"
-xelada = "C:\\Users\\alexd\\Desktop\\git\\VnllaBot\\"
-vps = "/home/vnlla/"
+tokens = {
+	"vps": "/home/vnlla/Vnllatoken.json", 
+	"shupik": "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json",
+	"xelada": "D:\\git\\VnllaBot\\local\\Vnllatoken.json"
+}
 
 servers = {
 	328656303742386177: "industrial-nation.us.to:25565",
@@ -44,34 +44,18 @@ try:
 	with open(vps+"Vnllatoken.json", "r") as f:
 		token = json.load(f)[0]
 except:
+	token = None
+# token load
+for tok in tokens.values():
 	try:
-		with open(shupik+"Vnllatoken.json", "r") as f:
+		with open(tok, "r") as f:
 			token = json.load(f)[0]
 	except:
-		try:
-			with open(xelada+"Vnllatoken.json", "r") as f:
-				token = json.load(f)[0]
-		except:
-			print("No valid discord token found.")
-			sys.exit(0)
-
-# ksoft token
-# try:
-# 	with open(vps+"KsoftToken.json", "r") as f:
-# 		ksoft_token = json.load(f)[0]
-# except:
-# 	try:
-# 		with open(shupik+"KsoftToken.json", "r") as f:
-# 			ksoft_token = json.load(f)[0]
-# 	except:
-# 		try:
-# 			with open(xelada+"KsoftToken.json", "r") as f:
-# 				ksoft_token = json.load(f)[0]
-# 		except:
-# 			print("No valid ksoftapi token found.")
-# 			sys.exit(0)
-
-# ksoft_client = ksoftapi.Client(api_key=ksoft_token)
+		continue
+		
+if not token:
+	print("No valid token found.")
+	sys.exit(0)
 
 # getting the list of people that want to be notified
 try:
@@ -305,14 +289,25 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	# generate x,y data relative to current time
 	data_x = []
 	data_y = []
+	
 	i = time.time() - stop_sec
-	for t in range(time.time() - stop_sec, time.time()):
-		if temp_pd['x'][i] == null:
-			i = min(temp_pd['x'], key=lambda x:abs(x-i))
-		if temp_pd['x'][i] >= time.time() - stop_sec:
-			data_x.append((temp_pd['x'][i] - time.time()))
-			data_y.append(temp_pd['y'][i])
-		i += 30
+	index, t = min(enumerate(temp_pd['x']), key=lambda x:abs(x[1]-i)) # find time in data that is closest to requested time
+
+	reverse_time = 1440 # time in seconds to grab data from the past if not available
+	threshold = 501 # time between two data points threshold
+	
+	for _ in range(int(t), int(time.time()), 30):
+		if index >= len(temp_pd['x']) or (temp_pd['x'][index] - t) > threshold:
+			#print(temp_pd['x'][index] - t)
+			data_x.append(t - time.time())
+			data_y.append(temp_pd['y'][index-(reverse_time if len(temp_pd['x']) > reverse_time else len(temp_pd['x']))]) # data 1 week ago
+			#data_y.append(0)
+			t += 30
+		else:
+			t = temp_pd['x'][index]
+			data_x.append(temp_pd['x'][index] - time.time())
+			data_y.append(temp_pd['y'][index])
+			index += 1
 
 	# test for not enough data points
 	if len(data_y) < 2:
@@ -320,19 +315,19 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 		return await ctx.send(embed=embed)
 
 	# figure out time unit for xlabel
-	if (data_x[0] - data_x[-1]) / 60 <= 120: #minutes
+	if (data_x[-1] - data_x[0]) / 60 <= 120: #minutes
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 60
 			x_time = 'minutes'
-	elif (data_x[0] - data_x[-1]) / 3600 <= 48: #hours
+	elif (data_x[-1] - data_x[0]) / 3600 <= 48: #hours
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 3600
 			x_time = 'hours'
-	elif (data_x[0] - data_x[-1]) / 86400 <= 14: #days
+	elif (data_x[-1] - data_x[0]) / 86400 <= 14: #days
 		for i in range(len(data_x)):
 			data_x[i] = data_x[i] / 86400
 			x_time = 'days'
-	elif (data_x[0] - data_x[-1]) / 604800 <= 8: #weeks
+	elif (data_x[-1] - data_x[0]) / 604800 <= 8: #weeks
 		for i in range(len(data_x)): 
 			data_x[i] = data_x[i] / 604800
 			x_time = 'weeks'
@@ -378,10 +373,10 @@ async def stats(ctx, stop_time=-1.0, stop_u ='d', regression=''):
 	plt.savefig(buf, edgecolor='none', format='png')
 	buf.seek(0)
 
-	if stop_sec == math.inf:
+	if stop_time == "":
 		embed = discord.Embed(title='Displaying available activity data for **all time**.', color=0x57de45)
 	else:
-		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[-1])), x_time), color=0x57de45)
+		embed = discord.Embed(title='Displaying available activity data for the last **{0} {1}**.'.format(abs(round(data_x[0])), x_time), color=0x57de45)
 
 	embed.add_field(name='__Mean Player Count__', value='**{}**'.format(round(sum(data_y)/len(data_y), 2)), inline=False)
 
