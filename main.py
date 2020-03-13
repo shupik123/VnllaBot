@@ -145,7 +145,7 @@ async def on_ready():
 
 @client.command(pass_context = True)
 async def help(ctx):
-	if ctx.guild.id == 328656303742386177:
+	if ctx.guild.id != 205205049335349248:
 		embed=discord.Embed(title="Github Link", url="https://github.com/shupik123/VnllaBot", color=0x62f3ff)
 		embed.add_field(name='!server', value='Tells you the status of the server.', inline=False)
 		return await ctx.send(embed=embed)
