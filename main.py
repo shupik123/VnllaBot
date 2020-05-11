@@ -141,11 +141,10 @@ async def vnllastatusloop():
 @client.event
 async def on_ready():
 	# just saying that the bot is on
-	print('Logged in as')
-	print(client.user.name)
-	print(client.user.id)
-	print(f'ksoft: {ksoft_token}')
-	print('------')
+	print('Client: {0.user.name}#{0.user.discrimator}'.format(client))
+	print('Client ID: {0.user.id}')
+	print(f'ksoft token: {ksoft_token}')
+	print('--------------')
 	global starttime
 	starttime = time.time()
 
