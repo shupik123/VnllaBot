@@ -144,6 +144,7 @@ async def on_ready():
 	print('Logged in as')
 	print(client.user.name)
 	print(client.user.id)
+	print(f'ksoft: {ksoft_token}')
 	print('------')
 	global starttime
 	starttime = time.time()
