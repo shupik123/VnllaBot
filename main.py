@@ -444,12 +444,8 @@ async def meme(ctx, *search):
 		embed.set_image(url=img['image_url'])
 		embed.set_footer(text="👍{0} | 👎{1}".format(img['upvotes'],img['downvotes']))
 		await ctx.send(embed=embed)
-	elif req.status_code == 404:
-		r_json = req.json()
-		embed = discord.Embed(title=':warning: Error! :warning:', description=r_json['message'], color=0xff0000)
-		await ctx.send(embed=embed)
 	else:
-		embed = discord.Embed(title=':warning: Error! :warning:', description='{}: Something went wrong!'.format(req.status_code), color=0xff0000)
+		embed = discord.Embed(title=':warning: Error! :warning:', description='{0}: {1}'.format(req.status_code,req.json()['message']), color=0xff0000)
 		await ctx.send(embed=embed)
 
 
