@@ -2,3 +2,4 @@ notifylist.json
 plot.json
 .vscode/settings.json
 local/
+private/*

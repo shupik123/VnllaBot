@@ -30,7 +30,7 @@ client.remove_command('help')
 
 tokens = {
 	"vps": "/home/vnlla/Vnllatoken.json", 
-	"shupik": "C:\\Users\\Shupik desu\\Desktop\\Programing\\python\\Bot\\Vnllatoken.json",
+	"shupik": "private/vnllatoken.json",
 	"xelada": "D:\\git\\VnllaBot\\local\\Vnllatoken.json"
 }
 
@@ -56,6 +56,12 @@ for tok in tokens.values():
 if not token:
 	print("No valid token found.")
 	sys.exit(0)
+
+try:
+	with open("private/ksoft.json","r") as f:
+		ksoft_token = json.load(f)
+except:
+	ksoft_token = None
 
 # getting the list of people that want to be notified
 try:
@@ -425,15 +431,26 @@ async def data_purge(ctx, confirmation=''):
 	return await ctx.send(embed=embed)
 
 
-# @client.command(pass_context = True)
-# async def meme(ctx, *search):
-# 	search = ' '.join(search)
-# 	img = await ksoft_client.random_meme()
-
-# 	embed = discord.Embed(title=img.title, url=img.source)
-# 	embed.set_image(url=img.url)
-# 	embed.set_footer(text="▲{0.upvotes} | ▼{0.downvotes}".format(img))
-# 	await ctx.send(embed=embed)
+@client.command(pass_context = True)
+async def meme(ctx, *search):
+	meme_url = 'https://api.ksoft.si/images/random-meme'
+	headers = {
+		'Authorization': f'Bearer {ksoft_token}'
+	}
+	req = requests.get(meme_url,headers=headers)
+	if req.status_code == 200:
+		img = req.json()
+		embed = discord.Embed(title=img['title'], url=img['source'])
+		embed.set_image(url=img['image_url'])
+		embed.set_footer(text="👍{0} | 👎{1}".format(img['upvotes'],img['downvotes']))
+		await ctx.send(embed=embed)
+	elif req.status_code == 404:
+		r_json = req.json()
+		embed = discord.Embed(title=':warning: Error! :warning:', description=r_json['message'], color=0xff0000)
+		await ctx.send(embed=embed)
+	else:
+		embed = discord.Embed(title=':warning: Error! :warning:', description='{}: Something went wrong!'.format(req.status_code), color=0xff0000)
+		await ctx.send(embed=embed)
 
 
 @client.command(pass_context = True)
