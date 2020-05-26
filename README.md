@@ -13,6 +13,8 @@ __Commands:__
  - `!remove` : removes you from the notification list.
  - `!botstatus` : tells you which Discord servers the bot is on and for how long it has been running.
  - `!stats` : Shows you a high tech graph of activity on vnlla.net!
+ - `!appeal` : Shows you the appeal process for being banned.
+ - `!meme` : Gets a meme from reddit.
  
  __Features:__
  - Playing `Server online ( player / max )`
