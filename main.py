@@ -164,7 +164,8 @@ async def help(ctx):
 	embed.add_field(name='!remove', value='Removes you from the notification list.', inline=False)
 	embed.add_field(name='!botstatus', value='Tells you how long the bot has been running.', inline=False)
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
-	embed.add_field(name='**NEW:** !appeal', value='Explains to you the appeal process', inline=False)
+	embed.add_field(name='!appeal', value='Explains to you the appeal process.', inline=False)
+	embed.add_field(name='!meme', value='Sends a random meme from reddit.', inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
 	await ctx.send(embed=embed)
 
