@@ -458,6 +458,17 @@ async def meme(ctx, *search):
 		embed = discord.Embed(title=':warning: Error! :warning:', description='{}: Something went wrong!'.format(req.status_code), color=0xff0000)
 		await ctx.send(embed=embed)
 
+@client.command(pass_context = True)
+async def vote(ctx):
+	embed=discord.Embed(title="Vote for vnlla.net!", color=random.randint(0, 0xFFFFFF))
+
+	embed.add_field(name="MCSL", value="https://minecraft-server-list.com/server/268941/vote/")
+	embed.add_field(name="PMC", value="https://www.planetminecraft.com/server/vnlla-3156996/vote/")
+	embed.add_field(name="Minecraft Multiplayer", value="https://minecraft-mp.com/server/134764/vote/")
+	embed.add_field(name="Minecraft Servers", value="https://minecraftservers.org/vote/387480")
+
+	await ctx.send(embed=embed)
+
 
 @client.command(pass_context = True)
 async def echo(ctx, channel: int, *text):
