@@ -166,7 +166,9 @@ async def help(ctx):
 	embed.add_field(name='!stats [`time unit` in past to view] [time unit: (h, d, w)]', value='Shows you a high tech graph of activity on vnlla.net!', inline=False)
 	embed.add_field(name='!appeal', value='Explains to you the appeal process.', inline=False)
 	embed.add_field(name='!meme', value='Sends a random meme from reddit.', inline=False)
+	embed.add_field(name='!vote', value='Shows voting links for vnlla.net.', inline=False)
 	embed.set_footer(text="<argument>: required input | [argument]: optional input | Ping @shupik#2705 for any needs.")
+
 	await ctx.send(embed=embed)
 
 
@@ -462,10 +464,10 @@ async def meme(ctx, *search):
 async def vote(ctx):
 	embed=discord.Embed(title="Vote for vnlla.net!", color=random.randint(0, 0xFFFFFF))
 
-	embed.add_field(name="MCSL", value="https://minecraft-server-list.com/server/268941/vote/")
-	embed.add_field(name="PMC", value="https://www.planetminecraft.com/server/vnlla-3156996/vote/")
-	embed.add_field(name="Minecraft Multiplayer", value="https://minecraft-mp.com/server/134764/vote/")
-	embed.add_field(name="Minecraft Servers", value="https://minecraftservers.org/vote/387480")
+	embed.add_field(name="MCSL", value="https://minecraft-server-list.com/server/268941/vote/", inline=False)
+	embed.add_field(name="PMC", value="https://www.planetminecraft.com/server/vnlla-3156996/vote/", inline=False)
+	embed.add_field(name="Minecraft Multiplayer", value="https://minecraft-mp.com/server/134764/vote/", inline=False)
+	embed.add_field(name="Minecraft Servers", value="https://minecraftservers.org/vote/387480", inline=False)
 
 	await ctx.send(embed=embed)
 
