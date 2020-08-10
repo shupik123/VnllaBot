@@ -1,5 +1,3 @@
-# Works with Python 3.6
-
 import asyncio
 import io
 import json
@@ -102,7 +100,6 @@ async def vnllastatusloop():
 			# 		user = await client.fetch_user(tags)
 			# 		await user.send("Vnlla is back online.")
 
-			await client.change_presence(status=discord.Status.online, activity=discord.Game("Server Online ({0}/{1})".format(status.players.online,status.players.max)))
 			downtime = 0
 
 			# plot data
@@ -147,6 +144,7 @@ async def on_ready():
 	print('--------------')
 	global starttime
 	starttime = time.time()
+	await client.change_presence(status=discord.Status.online, activity=discord.Game("without Player Status"))
 
 
 @client.command(pass_context = True)
