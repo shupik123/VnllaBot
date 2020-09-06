@@ -110,7 +110,8 @@ async def vnllastatusloop():
 
 		except IOError:
 			if downtime < 5:
-				await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game("Down for {a} min".format(a=downtime)))
+				# await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game("Down for {a} min".format(a=downtime)))
+				pass
 
 			# else:
 			# 	await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game("Down for {a} min".format(a=downtime)))
